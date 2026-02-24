@@ -228,7 +228,7 @@ const TransactionForm = (props: {
                         shadow-sm border p-2 flex-1 justify-center 
                         `,
                         field.value === _TRANSACTION_TYPE.INCOME &&
-                          "!border-primary"
+                        "!border-primary"
                       )}
                     >
                       <RadioGroupItem
@@ -247,7 +247,7 @@ const TransactionForm = (props: {
                         shadow-sm border p-2 flex-1 justify-center 
                         `,
                         field.value === _TRANSACTION_TYPE.EXPENSE &&
-                          "!border-primary"
+                        "!border-primary"
                       )}
                     >
                       <RadioGroupItem
@@ -295,8 +295,8 @@ const TransactionForm = (props: {
                         {...field}
                         disabled={isScanning}
                         onValueChange={(value) => field.onChange(value || "")}
-                        placeholder="$0.00"
-                        prefix="$"
+                        placeholder="₹0.00"
+                        prefix="₹"
                       />
                     </div>
                   </FormControl>
@@ -315,7 +315,7 @@ const TransactionForm = (props: {
                   <SingleSelector
                     value={
                       CATEGORIES.find((opt) => opt.value === field.value) ||
-                      field.value
+                        field.value
                         ? { value: field.value, label: field.value }
                         : undefined
                     }
