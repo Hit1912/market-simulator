@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import PageHeader from "./page-header";
+import { motion } from "framer-motion";
 
 interface PropsType {
   children: React.ReactNode;
@@ -19,23 +20,28 @@ const PageLayout = ({ children, className,
   showHeader = true,
   addMarginTop = false,
   renderPageHeader,
- }: PropsType) => {
+}: PropsType) => {
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
       {showHeader && (
-        <PageHeader 
-          title={title} 
-          subtitle={subtitle} 
-          rightAction={rightAction} 
+        <PageHeader
+          title={title}
+          subtitle={subtitle}
+          rightAction={rightAction}
           renderPageHeader={renderPageHeader}
         />
       )}
-    <div className={cn("w-full max-w-[var(--max-width)] mx-auto pt-8",
-      addMarginTop && "-mt-20",
-      className)}>
-      {children}
-    </div>
-    </div>
+      <div className={cn("w-full max-w-[var(--max-width)] mx-auto pt-8",
+        addMarginTop && "-mt-20",
+        className)}>
+        {children}
+      </div>
+    </motion.div>
   );
 };
 
