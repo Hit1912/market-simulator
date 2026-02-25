@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
 import { HTTPSTATUS } from "../config/http.config";
 import {
+  deleteReportService,
+  generateAndSendReportService,
   generateReportService,
   getAllReportsService,
+  resendReportService,
   updateReportSettingService,
 } from "../services/report.service";
 import { updateReportSettingSchema } from "../validators/report.validator";
@@ -43,14 +46,52 @@ export const generateReportController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
     const { from, to } = req.query;
+
+    if (!from || !to) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: "Date range (from, to) is required",
+      });
+    }
+
     const fromDate = new Date(from as string);
     const toDate = new Date(to as string);
 
-    const result = await generateReportService(userId, fromDate, toDate);
+    const result = await generateAndSendReportService(userId, fromDate, toDate);
+
+    if (!result.success) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: result.message,
+      });
+    }
 
     return res.status(HTTPSTATUS.OK).json({
-      message: "Report generated successfully",
-      ...result,
+      message: result.message,
+    });
+  }
+);
+
+export const resendReportController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const { id } = req.params;
+
+    await resendReportService(userId, id);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Report resent successfully",
+    });
+  }
+);
+
+export const deleteReportController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const { id } = req.params;
+
+    await deleteReportService(userId, id);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Report deleted successfully",
     });
   }
 );

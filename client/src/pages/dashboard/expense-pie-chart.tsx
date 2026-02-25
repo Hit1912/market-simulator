@@ -78,7 +78,8 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
   };
 
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border">
+    <Card className="glass-card gsap-reveal !shadow-none border-0 relative overflow-hidden h-full">
+      <div className="absolute bottom-0 left-0 p-10 bg-primary/5 blur-3xl rounded-full" />
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Expenses Breakdown</CardTitle>
         <CardDescription>Total expenses {dateRange?.label}</CardDescription>

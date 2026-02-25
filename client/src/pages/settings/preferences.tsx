@@ -12,11 +12,12 @@ import {
     toggleShowDecimals,
     setDateFormat,
     setWeekStart,
-    setBudgetThreshold
+    setBudgetThreshold,
+    setMonthlyBudgetGoal
 } from "@/features/settings/settingsSlice";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Wallet } from "lucide-react";
+import { CalendarDays, Wallet, Target, AlertTriangle } from "lucide-react";
 
 const Preferences = () => {
     const dispatch = useAppDispatch();
@@ -28,7 +29,8 @@ const Preferences = () => {
         pushNotifications,
         dateFormat,
         weekStart,
-        budgetThreshold
+        budgetThreshold,
+        monthlyBudgetGoal
     } = useTypedSelector((state) => state.settings);
 
     const handleCurrencyChange = (value: string) => {
@@ -131,14 +133,29 @@ const Preferences = () => {
                     <h4 className="text-sm font-medium flex items-center gap-2">
                         <Wallet className="size-4 text-primary" /> Budgeting
                     </h4>
-                    <div className="max-w-xs space-y-2">
-                        <label className="text-xs text-muted-foreground">Low Balance Alert Threshold ({currency === 'INR' ? '₹' : '$'})</label>
-                        <Input
-                            type="number"
-                            value={budgetThreshold}
-                            onChange={(e) => dispatch(setBudgetThreshold(Number(e.target.value)))}
-                            placeholder="e.g. 5000"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                        <div className="space-y-2">
+                            <label className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Target className="size-3" /> Monthly Budget Goal ({currency === 'INR' ? '₹' : '$'})
+                            </label>
+                            <Input
+                                type="number"
+                                value={monthlyBudgetGoal}
+                                onChange={(e) => dispatch(setMonthlyBudgetGoal(Number(e.target.value)))}
+                                placeholder="e.g. 50000"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs text-muted-foreground flex items-center gap-1">
+                                <AlertTriangle className="size-3" /> Low Balance Alert Threshold ({currency === 'INR' ? '₹' : '$'})
+                            </label>
+                            <Input
+                                type="number"
+                                value={budgetThreshold}
+                                onChange={(e) => dispatch(setBudgetThreshold(Number(e.target.value)))}
+                                placeholder="e.g. 5000"
+                            />
+                        </div>
                     </div>
                 </div>
 

@@ -77,6 +77,8 @@ export const processReportJob = async () => {
                 sentDate: now,
                 period: report.period,
                 status: ReportStatusEnum.SENT,
+                fromDate: from,
+                toDate: to,
                 createdAt: now,
                 updatedAt: now,
               },
@@ -107,6 +109,8 @@ export const processReportJob = async () => {
                 status: report
                   ? ReportStatusEnum.FAILED
                   : ReportStatusEnum.NO_ACTIVITY,
+                fromDate: from,
+                toDate: to,
                 createdAt: now,
                 updatedAt: now,
               },

@@ -22,7 +22,7 @@ import { TrendingUpIcon, TrendingDownIcon } from "lucide-react";
 import { DateRangeType } from "@/components/date-range-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChartAnalyticsQuery } from "@/features/analytics/analyticsAPI";
-import { useFormatCurrency } from "@/hooks/use-format-currency";
+
 
 interface PropsType {
   dateRange?: DateRangeType;
@@ -45,7 +45,7 @@ const chartConfig = {
 const DashboardDataChart: React.FC<PropsType> = (props) => {
   const { dateRange } = props;
   const isMobile = useIsMobile();
-  const formatCurrency = useFormatCurrency();
+
 
   const { data, isFetching } = useChartAnalyticsQuery({
     preset: dateRange?.value,
@@ -59,7 +59,8 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
   }
 
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border !pt-0">
+    <Card className="glass-card gsap-reveal !shadow-none border-0 !pt-0 relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-10 bg-primary/5 blur-3xl rounded-full" />
       <CardHeader
         className="flex flex-col items-stretch !space-y-0 border-b border-gray-100
       dark:border-border !p-0 pr-1 sm:flex-row"
@@ -130,55 +131,42 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 dataKey="date"
                 tickLine={false}
                 axisLine={false}
-                tickMargin={8}
+                tickMargin={12}
                 minTickGap={isMobile ? 20 : 25}
                 tickFormatter={(value) =>
-                  format(new Date(value), isMobile ? "MMM d" : "MMMM d, yyyy")
+                  format(new Date(value), isMobile ? "MMM d" : "MMM d")
                 }
+                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
               />
               <ChartTooltip
                 cursor={{
-                  stroke: "#94a3b8",
+                  stroke: "rgba(255,255,255,0.2)",
                   strokeWidth: 1,
-                  strokeDasharray: "3 3",
                 }}
                 content={
                   <ChartTooltipContent
                     labelFormatter={(value) =>
                       format(new Date(value), "MMM d, yyyy")
                     }
-                    indicator="line"
-                    formatter={(value, name) => {
-                      const isExpense = name === "expenses";
-                      const color = isExpense ? COLORS[1] : COLORS[0];
-                      return [
-                        <span key={name} style={{ color }}>
-                          {formatCurrency(Number(value), {
-                            showSign: true,
-                            compact: true,
-                            isExpense,
-                          })}
-                        </span>,
-                        isExpense ? "Expenses" : "Income",
-                      ];
-                    }}
+                    indicator="dot"
                   />
                 }
               />
               <Area
                 dataKey="expenses"
-                stackId="1"
-                type="step"
+                type="monotone"
                 fill="url(#expensesGradient)"
                 stroke={COLORS[1]}
-                className="drop-shadow-sm"
+                strokeWidth={3}
+                className="drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]"
               />
               <Area
                 dataKey="income"
-                stackId="1"
-                type="step"
+                type="monotone"
                 fill="url(#incomeGradient)"
                 stroke={COLORS[0]}
+                strokeWidth={3}
+                className="drop-shadow-[0_0_8px_rgba(34,197,94,0.4)]"
               />
               <ChartLegend
                 verticalAlign="bottom"

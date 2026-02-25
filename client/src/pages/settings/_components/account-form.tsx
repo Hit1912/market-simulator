@@ -16,18 +16,16 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch, useTypedSelector } from "@/app/hook";
-import { Loader } from "lucide-react";
+import { Camera, Loader } from "lucide-react";
 import { useUpdateUserMutation } from "@/features/user/userAPI";
 import { updateCredentials } from "@/features/auth/authSlice";
 
 const accountFormSchema = z.object({
   name: z
     .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(100)
     .optional(),
-  profilePicture: z.string(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
@@ -37,7 +35,7 @@ export function AccountForm() {
   const { user } = useTypedSelector((state) => state.auth);
 
   const [file, setFile] = useState<File | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const [updateUserMutation, { isLoading }] = useUpdateUserMutation();
 
@@ -45,16 +43,20 @@ export function AccountForm() {
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
       name: user?.name || "",
-      profilePicture: user?.profilePicture || "",
     },
   });
 
   const onSubmit = (values: AccountFormValues) => {
-    console.log(values);
     if (isLoading) return;
 
+    // At least one of name or file must be provided
+    if (!values.name && !file) {
+      toast.error("Please update your name or choose a new profile picture.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("name", values.name || "");
+    if (values.name) formData.append("name", values.name);
     if (file) formData.append("profilePicture", file);
 
     updateUserMutation(formData)
@@ -68,66 +70,91 @@ export function AccountForm() {
             },
           })
         );
-        toast.success("Account updated successfully");
+        setFile(null); // clear file after success
+        toast.success("Account updated successfully!");
       })
       .catch((error) => {
-        toast.error(error.data.message || "Failed to update account");
+        const msg =
+          error?.data?.message ||
+          error?.error ||
+          "Failed to update account. Please try again.";
+        toast.error(msg);
       });
   };
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      toast.error("Please select a file");
+    const selected = event.target.files?.[0];
+    if (!selected) return;
+
+    if (!selected.type.startsWith("image/")) {
+      toast.error("Please select an image file (JPG, PNG, GIF, or WebP).");
       return;
     }
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
+
+    if (selected.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be under 5 MB.");
       return;
     }
-    setFile(file);
+
+    setFile(selected);
+
+    // Show local preview instantly
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setAvatarUrl(result);
-    };
-    reader.readAsDataURL(file);
+    reader.onload = (e) => setAvatarPreview(e.target?.result as string);
+    reader.readAsDataURL(selected);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="flex flex-col items-start space-y-4">
+        {/* Avatar picker */}
+        <div className="flex flex-col items-start space-y-3">
           <FormLabel>Profile Picture</FormLabel>
-          <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage
-                src={avatarUrl || user?.profilePicture || ""}
-                className="!object-cover !object-center"
-              />
-              <AvatarFallback className="text-2xl">
-                {form.watch("name")?.charAt(0)?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
+          <div className="flex items-center gap-5">
+            {/* Avatar with camera overlay */}
+            <label htmlFor="avatar-upload" className="relative cursor-pointer group">
+              <Avatar className="h-20 w-20 ring-2 ring-white/10 group-hover:ring-primary/50 transition-all duration-300">
+                <AvatarImage
+                  src={avatarPreview || user?.profilePicture || ""}
+                  className="!object-cover !object-center"
+                />
+                <AvatarFallback className="text-2xl bg-slate-800">
+                  {form.watch("name")?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+              {/* Camera icon overlay */}
+              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <Camera className="h-6 w-6 text-white" />
+              </div>
+            </label>
+
             <div className="flex flex-col gap-2">
               <Input
+                id="avatar-upload"
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/gif,image/webp"
                 onChange={handleAvatarChange}
-                className="max-w-[250px]"
+                className="max-w-[240px] text-sm cursor-pointer"
               />
               <p className="text-xs text-muted-foreground">
-                Recommended: Square JPG, PNG, at least 300x300px.
+                JPG, PNG, GIF or WebP · Max 5 MB
               </p>
+              {file && (
+                <p className="text-xs text-primary font-medium">
+                  ✓ {file.name} selected
+                </p>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Name field */}
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Display Name</FormLabel>
               <FormControl>
                 <Input placeholder="Your name" {...field} />
               </FormControl>
@@ -135,9 +162,16 @@ export function AccountForm() {
             </FormItem>
           )}
         />
-        <Button disabled={isLoading} type="submit">
-          {isLoading && <Loader className="h-4 w-4 animate-spin" />}
-          Update account
+
+        <Button disabled={isLoading} type="submit" className="glow-btn">
+          {isLoading ? (
+            <>
+              <Loader className="h-4 w-4 animate-spin mr-2" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </form>
     </Form>

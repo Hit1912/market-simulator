@@ -2,6 +2,7 @@ import { useTypedSelector } from "@/app/hook";
 import DashboardHeader from "./_component/dashboard-header";
 import DashboardStats from "./_component/dashboard-stats";
 import { DateRangeType } from "@/components/date-range-select";
+import { usePageTransition } from "@/hooks/use-gsap";
 
 const DashboardSummary = ({
   dateRange,
@@ -11,6 +12,7 @@ const DashboardSummary = ({
   setDateRange?: (range: DateRangeType) => void;
 }) => {
   const { user } = useTypedSelector((state) => state.auth);
+  usePageTransition(".gsap-reveal", [dateRange, user]);
 
   return (
     <div className="w-full">

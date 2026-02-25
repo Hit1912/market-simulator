@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  deleteAccountController,
   getCurrentUserController,
   updateUserController,
 } from "../controllers/user.controller";
@@ -13,5 +14,6 @@ userRoutes.put(
   upload.single("profilePicture"),
   updateUserController
 );
+userRoutes.delete("/delete", deleteAccountController);
 
 export default userRoutes;

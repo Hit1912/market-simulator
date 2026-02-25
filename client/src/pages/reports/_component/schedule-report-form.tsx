@@ -99,20 +99,21 @@ const ScheduleReportForm = ({
               render={({ field }) => (
                 <FormItem
                   className="flex flex-row items-center justify-between 
-                rounded-lg border p-4"
+                rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm shadow-sm"
                 >
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Monthly Reports</FormLabel>
+                    <FormLabel className="text-base font-semibold">Monthly Reports</FormLabel>
                     <p className="text-sm text-muted-foreground">
                       {form.watch("isEnabled")
-                        ? "Reports activated"
-                        : "Reports deactivated"}
+                        ? "Receive monthly insights via email"
+                        : "Email notifications are disabled"}
                     </p>
                   </div>
                   <FormControl>
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-primary"
                     />
                   </FormControl>
                 </FormItem>
@@ -125,16 +126,16 @@ const ScheduleReportForm = ({
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-sm font-medium">Notification Email</FormLabel>
+                    <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-lg px-3 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+                      <Mail className="h-4 w-4 text-primary/70" />
                       <FormControl>
                         <Input
                           placeholder="Enter email address"
                           disabled={true}
                           {...field}
-                          className="flex-1"
+                          className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 h-10"
                         />
                       </FormControl>
                     </div>
@@ -148,19 +149,19 @@ const ScheduleReportForm = ({
                 control={form.control}
                 name="frequency"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Repeat On</FormLabel>
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-sm font-medium">Repeat Frequency</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={true}
                     >
                       <FormControl className="w-full">
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/5 border-white/10 focus:ring-1 focus:ring-primary/50">
                           <SelectValue placeholder="Select frequency" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         <SelectItem value="MONTHLY">Monthly</SelectItem>
                       </SelectContent>
                     </Select>
@@ -171,14 +172,20 @@ const ScheduleReportForm = ({
 
               {/* Disabled overlay */}
               {!form.watch("isEnabled") && (
-                <div className="absolute inset-0 bg-white/50 dark:bg-black/50 z-10" />
+                <div className="absolute -inset-2 bg-slate-950/20 backdrop-blur-[1px] z-10 rounded-xl" />
               )}
             </div>
 
             {/* Schedule Summary */}
-            <div className="bg-muted p-4 rounded-lg">
-              <h3 className="font-medium mb-2">Schedule Summary</h3>
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-primary/5 border border-primary/10 p-4 rounded-xl space-y-2">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Schedule Status
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {getScheduleSummary()}
               </p>
             </div>

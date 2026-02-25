@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { genAI, genAIModel } from "../config/google-ai.config";
 import { createUserContent } from "@google/genai";
 import { reportInsightPrompt } from "../utils/prompt";
+import { sendReportEmail } from "../mailers/report.mailer";
 
 export const getAllReportsService = async (
   userId: string,
@@ -256,6 +257,91 @@ async function generateInsightsAI({
     return [];
   }
 }
+
+export const deleteReportService = async (userId: string, reportId: string) => {
+  const report = await ReportModel.findOneAndDelete({ _id: reportId, userId });
+  if (!report) throw new NotFoundException("Report not found");
+  return report;
+};
+
+export const resendReportService = async (userId: string, reportId: string) => {
+  const reportDoc = await ReportModel.findOne({ _id: reportId, userId }).populate("userId");
+  if (!reportDoc) throw new NotFoundException("Report not found");
+
+  if (!reportDoc.fromDate || !reportDoc.toDate) {
+    throw new NotFoundException("This report is too old to be resent. fromDate or toDate is missing.");
+  }
+
+  const reportData = await generateReportService(
+    userId,
+    reportDoc.fromDate,
+    reportDoc.toDate
+  );
+
+  if (!reportData) throw new NotFoundException("Could not regenerate report data - No activity found for this period");
+
+  const setting = await ReportSettingModel.findOne({ userId });
+  const user: any = reportDoc.userId;
+
+  await sendReportEmail({
+    email: user.email,
+    username: user.name,
+    report: {
+      period: reportData.period,
+      totalIncome: reportData.summary.income,
+      totalExpenses: reportData.summary.expenses,
+      availableBalance: reportData.summary.balance,
+      savingsRate: reportData.summary.savingsRate,
+      topSpendingCategories: reportData.summary.topCategories,
+      insights: reportData.insights,
+    },
+    frequency: setting?.frequency || "MANUAL",
+  });
+
+  reportDoc.status = "SENT";
+  reportDoc.sentDate = new Date();
+  await reportDoc.save();
+
+  return reportDoc;
+};
+
+export const generateAndSendReportService = async (userId: string, fromDate: Date, toDate: Date) => {
+  const reportData = await generateReportService(userId, fromDate, toDate);
+
+  if (!reportData) {
+    return { success: false, message: "No activity found for the selected period. No report sent." };
+  }
+
+  const user = await mongoose.model("User").findById(userId);
+  const setting = await ReportSettingModel.findOne({ userId });
+
+  await sendReportEmail({
+    email: user?.email!,
+    username: user?.name!,
+    report: {
+      period: reportData.period,
+      totalIncome: reportData.summary.income,
+      totalExpenses: reportData.summary.expenses,
+      availableBalance: reportData.summary.balance,
+      savingsRate: reportData.summary.savingsRate,
+      topSpendingCategories: reportData.summary.topCategories,
+      insights: reportData.insights,
+    },
+    frequency: "MANUAL",
+  });
+
+  // Save to history
+  await ReportModel.create({
+    userId,
+    period: reportData.period,
+    sentDate: new Date(),
+    status: "SENT",
+    fromDate,
+    toDate
+  });
+
+  return { success: true, message: "Report generated and sent successfully" };
+};
 
 function calculateSavingRate(totalIncome: number, totalExpenses: number) {
   if (totalIncome <= 0) return 0;

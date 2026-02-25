@@ -12,6 +12,8 @@ export interface ReportDocument extends Document {
   period: string;
   sentDate: Date;
   status: keyof typeof ReportStatusEnum;
+  fromDate: Date;
+  toDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +37,14 @@ const reportSchema = new mongoose.Schema<ReportDocument>(
       type: String,
       enum: Object.values(ReportStatusEnum),
       default: ReportStatusEnum.PENDING,
+    },
+    fromDate: {
+      type: Date,
+      required: true,
+    },
+    toDate: {
+      type: Date,
+      required: true,
     },
   },
   {

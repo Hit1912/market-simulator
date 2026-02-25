@@ -11,6 +11,7 @@ interface SettingsState {
     dateFormat: string;
     weekStart: string;
     budgetThreshold: number;
+    monthlyBudgetGoal: number;
 }
 
 const initialState: SettingsState = {
@@ -24,6 +25,7 @@ const initialState: SettingsState = {
     dateFormat: "DD/MM/YYYY",
     weekStart: "monday",
     budgetThreshold: 5000,
+    monthlyBudgetGoal: 50000,
 };
 
 const settingsSlice = createSlice({
@@ -60,6 +62,9 @@ const settingsSlice = createSlice({
         setBudgetThreshold: (state, action: PayloadAction<number>) => {
             state.budgetThreshold = action.payload;
         },
+        setMonthlyBudgetGoal: (state, action: PayloadAction<number>) => {
+            state.monthlyBudgetGoal = action.payload;
+        },
     },
 });
 
@@ -74,6 +79,7 @@ export const {
     setDateFormat,
     setWeekStart,
     setBudgetThreshold,
+    setMonthlyBudgetGoal,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

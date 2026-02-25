@@ -6,9 +6,11 @@ import ExpensePieChart from "./expense-pie-chart";
 import DashboardRecentTransactions from "./dashboard-recent-transactions";
 import { useState } from "react";
 import { DateRangeType } from "@/components/date-range-select";
+import { usePageTransition } from "@/hooks/use-gsap";
 
 const Dashboard = () => {
   const [dateRange, _setDateRange] = useState<DateRangeType>(null);
+  usePageTransition(".gsap-reveal", [dateRange]);
 
   return (
     <div className="w-full flex flex-col">

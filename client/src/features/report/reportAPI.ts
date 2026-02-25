@@ -3,8 +3,8 @@ import { GetAllReportResponse, UpdateReportSettingParams } from "./reportType";
 
 export const reportApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({
-    
-    getAllReports: builder.query<GetAllReportResponse, {pageNumber: number, pageSize: number}>({
+
+    getAllReports: builder.query<GetAllReportResponse, { pageNumber: number, pageSize: number }>({
       query: (params) => {
         const { pageNumber = 1, pageSize = 20 } = params;
         return ({
@@ -13,6 +13,7 @@ export const reportApi = apiClient.injectEndpoints({
           params: { pageNumber, pageSize },
         });
       },
+      providesTags: ["Reports"],
     }),
 
     updateReportSetting: builder.mutation<void, UpdateReportSettingParams>({
@@ -22,10 +23,35 @@ export const reportApi = apiClient.injectEndpoints({
         body: payload,
       }),
     }),
+    resendReport: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/report/resend/${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Reports"],
+    }),
+    deleteReport: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/report/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Reports"],
+    }),
+    generateReport: builder.mutation<void, { from: string; to: string }>({
+      query: (params) => ({
+        url: "/report/generate",
+        method: "GET",
+        params,
+      }),
+      invalidatesTags: ["Reports"],
+    }),
   }),
 });
 
 export const {
-    useGetAllReportsQuery,
-    useUpdateReportSettingMutation
+  useGetAllReportsQuery,
+  useUpdateReportSettingMutation,
+  useResendReportMutation,
+  useDeleteReportMutation,
+  useGenerateReportMutation,
 } = reportApi;
