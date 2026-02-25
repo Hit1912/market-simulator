@@ -69,7 +69,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
             <span>Showing total transactions {dateRange?.label}</span>
           </CardDescription>
         </div>
-        <div className="flex">
+        <div className="flex flex-wrap sm:flex-nowrap">
           {TRANSACTION_TYPES.map((key) => {
             const chart = key as keyof typeof chartConfig;
             return (

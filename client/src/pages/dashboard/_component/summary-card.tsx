@@ -31,7 +31,7 @@ const getCardStatus = (
   cardType: CardType,
   expenseRatio?: number
 ): CardStatus => {
- if (cardType === "savings") {
+  if (cardType === "savings") {
     if (value === 0) {
       return {
         label: "No Savings Record",
@@ -169,9 +169,9 @@ const SummaryCard: FC<SummaryCardProps> = ({
     return isPercentageValue
       ? formatPercentage(val, { decimalPlaces: 1 })
       : formatCurrency(val, {
-          isExpense: cardType === "expenses",
-          showSign: cardType === "balance" && val < 0,
-        });
+        isExpense: cardType === "expenses",
+        showSign: cardType === "balance" && val < 0,
+      });
   };
 
   return (
@@ -184,7 +184,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
       <CardContent className="space-y-5">
         <div
           className={cn(
-            "text-4xl font-bold",
+            "text-2xl md:text-3xl lg:text-4xl font-bold truncate",
             cardType === "balance" && value < 0 ? "text-red-400" : "text-white"
           )}
         >
@@ -240,7 +240,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
                   ) : (
                     <TrendingDownIcon className="size-3" />
                   )}
-{/*                   Math.abs(percentageChange || 0) */}
+                  {/*                   Math.abs(percentageChange || 0) */}
                   <span>
                     {formatPercentage(percentageChange || 0, {
                       showSign: percentageChange !== 0,

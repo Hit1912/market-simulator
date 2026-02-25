@@ -40,7 +40,7 @@ const Navbar = () => {
     <>
       <header
         className={cn(
-          "w-full px-4 py-3 pb-3 lg:px-14 bg-[var(--secondary-dark-color)] text-white ",
+          "w-full px-2 py-3 pb-3 lg:px-14 bg-[var(--secondary-dark-color)] text-white ",
           pathname === PROTECTED_ROUTES.OVERVIEW && "!pb-3"
         )}
       >

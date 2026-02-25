@@ -15,7 +15,7 @@ export default function Transactions() {
       subtitle="Showing all transactions"
       addMarginTop
       rightAction={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ImportTransactionModal />
           <AddTransactionDrawer />
         </div>
