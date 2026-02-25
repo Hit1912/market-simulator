@@ -15,13 +15,11 @@ const Settings = () => {
   const sidebarNavItems = [
     { title: "Account", href: PROTECTED_ROUTES.SETTINGS },
     { title: "Appearance", href: PROTECTED_ROUTES.SETTINGS_APPEARANCE },
-    { title: "Subscription", href: PROTECTED_ROUTES.SETTINGS_BILLING },
-    { title: "Team", href: PROTECTED_ROUTES.SETTINGS_TEAM },
   ];
   return (
     <PageLayout
-      title="Platform Configuration"
-      subtitle="Manage your platform settings and security preferences."
+      title="Settings"
+      subtitle="Manage your account settings and set e-mail preferences."
       addMarginTop
     >
       <Card className="border shadow-none">

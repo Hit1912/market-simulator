@@ -13,6 +13,4 @@ export const PROTECTED_ROUTES = {
   REPORTS: "/reports",
   SETTINGS: "/settings",
   SETTINGS_APPEARANCE: "/settings/appearance",
-  SETTINGS_BILLING: "/settings/billing",
-  SETTINGS_TEAM: "/settings/team",
 };

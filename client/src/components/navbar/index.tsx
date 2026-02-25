@@ -32,7 +32,7 @@ const Navbar = () => {
     },
     {
       href: PROTECTED_ROUTES.SETTINGS,
-      label: "Platform Configuration",
+      label: "Settings",
     },
   ];
 
