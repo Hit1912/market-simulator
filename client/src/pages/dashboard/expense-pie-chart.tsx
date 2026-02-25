@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Label, Pie, PieChart, Cell } from "recharts";
 
 import {
@@ -16,11 +15,11 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DateRangeType } from "@/components/date-range-select";
-import { formatCurrency } from "@/lib/format-currency";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPercentage } from "@/lib/format-percentage";
 import { EmptyState } from "@/components/empty-state";
 import { useExpensePieChartBreakdownQuery } from "@/features/analytics/analyticsAPI";
+import { useFormatCurrency } from "@/hooks/use-format-currency";
 
 const COLORS = [
   "var(--color-chart-1)",
@@ -38,6 +37,7 @@ const chartConfig = {
 
 const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
   const { dateRange } = props;
+  const formatCurrency = useFormatCurrency();
 
   const { data, isFetching } = useExpensePieChartBreakdownQuery({
     preset: dateRange?.value,
@@ -133,7 +133,7 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
                               y={viewBox.cy}
                               className="fill-foreground text-2xl font-bold"
                             >
-                              ${totalSpent.toLocaleString()}
+                              {formatCurrency(totalSpent, { compact: true })}
                             </tspan>
                             <tspan
                               x={viewBox.cx}

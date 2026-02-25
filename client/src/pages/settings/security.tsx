@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { ShieldCheck, Smartphone, ShieldAlert, History } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAppDispatch, useTypedSelector } from "@/app/hook";
+import { toggleTwoFactorAuth, toggleLoginAlerts } from "@/features/settings/settingsSlice";
+import { toast } from "sonner";
 
 const Security = () => {
+    const dispatch = useAppDispatch();
+    const { twoFactorAuth, loginAlerts } = useTypedSelector((state) => state.settings);
+
     return (
         <div className="space-y-6">
             <div>
@@ -31,7 +37,13 @@ const Security = () => {
                             <p className="text-xs text-muted-foreground">Add an extra layer of security to your account.</p>
                         </div>
                     </div>
-                    <Switch />
+                    <Switch
+                        checked={twoFactorAuth}
+                        onCheckedChange={() => {
+                            dispatch(toggleTwoFactorAuth());
+                            toast.success(`2FA ${!twoFactorAuth ? 'Enabled' : 'Disabled'}`);
+                        }}
+                    />
                 </motion.div>
 
                 {/* Login Alerts */}
@@ -50,7 +62,13 @@ const Security = () => {
                             <p className="text-xs text-muted-foreground">Get notified of suspicious login attempts.</p>
                         </div>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                        checked={loginAlerts}
+                        onCheckedChange={() => {
+                            dispatch(toggleLoginAlerts());
+                            toast.success(`Login alerts ${!loginAlerts ? 'Enabled' : 'Disabled'}`);
+                        }}
+                    />
                 </motion.div>
 
                 {/* Session History */}
@@ -70,7 +88,14 @@ const Security = () => {
                                 <p className="text-xs text-muted-foreground">Device history where you are currently logged in.</p>
                             </div>
                         </div>
-                        <Button variant="ghost" size="sm" className="text-xs">Sign out all devices</Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs"
+                            onClick={() => toast.info("Signing out from other devices...")}
+                        >
+                            Sign out all devices
+                        </Button>
                     </div>
 
                     <div className="space-y-3 pt-2">
@@ -97,7 +122,12 @@ const Security = () => {
                         <p className="text-sm font-medium">Reset Password</p>
                         <p className="text-xs text-muted-foreground italic">Last changed 3 months ago</p>
                     </div>
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => toast.info("Password reset link sent to your email.")}
+                    >
                         <ShieldCheck className="size-4" />
                         Change Password
                     </Button>

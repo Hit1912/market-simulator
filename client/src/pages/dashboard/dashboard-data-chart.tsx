@@ -21,8 +21,8 @@ import { EmptyState } from "@/components/empty-state";
 import { TrendingUpIcon, TrendingDownIcon } from "lucide-react";
 import { DateRangeType } from "@/components/date-range-select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency } from "@/lib/format-currency";
 import { useChartAnalyticsQuery } from "@/features/analytics/analyticsAPI";
+import { useFormatCurrency } from "@/hooks/use-format-currency";
 
 interface PropsType {
   dateRange?: DateRangeType;
@@ -45,6 +45,7 @@ const chartConfig = {
 const DashboardDataChart: React.FC<PropsType> = (props) => {
   const { dateRange } = props;
   const isMobile = useIsMobile();
+  const formatCurrency = useFormatCurrency();
 
   const { data, isFetching } = useChartAnalyticsQuery({
     preset: dateRange?.value,

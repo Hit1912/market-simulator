@@ -8,7 +8,6 @@ import {
   MoreHorizontal,
   Pencil,
   RefreshCw,
-  //StopCircleIcon,
   Trash2,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -22,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatCurrency } from "@/lib/format-currency";
+import { useFormatCurrency } from "@/hooks/use-format-currency";
 import useEditTransactionDrawer from "@/hooks/use-edit-transaction-drawer";
 import { TransactionType } from "@/features/transaction/transationType";
 import { _TRANSACTION_FREQUENCY, _TRANSACTION_TYPE } from "@/constant";
@@ -111,11 +110,10 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     cell: ({ row }) => (
       <div className="capitalize">
         <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            row.getValue("type") === _TRANSACTION_TYPE.INCOME
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`px-2 py-1 rounded-full text-xs ${row.getValue("type") === _TRANSACTION_TYPE.INCOME
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
           {row.getValue("type")}
         </span>
@@ -128,23 +126,7 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
   {
     accessorKey: "amount",
     header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const type = row.getValue("type");
-
-      return (
-        <div
-          className={`text-right font-medium ${
-            type === _TRANSACTION_TYPE.INCOME
-              ? "text-green-600"
-              : "text-destructive"
-          }`}
-        >
-          {type === _TRANSACTION_TYPE.EXPENSE ? "-" : "+"}
-          {formatCurrency(amount)}
-        </div>
-      );
-    },
+    cell: ({ row }) => <AmountCell row={row} />,
   },
   {
     accessorKey: "date",
@@ -190,21 +172,21 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
 
       const frequencyMap: FrequencyMapType = isRecurring
         ? {
-            [_TRANSACTION_FREQUENCY.DAILY]: { label: "Daily", icon: RefreshCw },
-            [_TRANSACTION_FREQUENCY.WEEKLY]: {
-              label: "Weekly",
-              icon: RefreshCw,
-            },
-            [_TRANSACTION_FREQUENCY.MONTHLY]: {
-              label: "Monthly",
-              icon: RefreshCw,
-            },
-            [_TRANSACTION_FREQUENCY.YEARLY]: {
-              label: "Yearly",
-              icon: RefreshCw,
-            },
-            DEFAULT: { label: "One-time", icon: CircleDot }, // Fallback
-          }
+          [_TRANSACTION_FREQUENCY.DAILY]: { label: "Daily", icon: RefreshCw },
+          [_TRANSACTION_FREQUENCY.WEEKLY]: {
+            label: "Weekly",
+            icon: RefreshCw,
+          },
+          [_TRANSACTION_FREQUENCY.MONTHLY]: {
+            label: "Monthly",
+            icon: RefreshCw,
+          },
+          [_TRANSACTION_FREQUENCY.YEARLY]: {
+            label: "Yearly",
+            icon: RefreshCw,
+          },
+          DEFAULT: { label: "One-time", icon: CircleDot }, // Fallback
+        }
         : { DEFAULT: { label: "One-time", icon: CircleDot } };
 
       const frequencyKey = isRecurring ? (frequency as string) : "DEFAULT";
@@ -234,6 +216,22 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     cell: ({ row }) => <ActionsCell row={row} />,
   },
 ];
+
+const AmountCell = ({ row }: { row: any }) => {
+  const amount = parseFloat(row.getValue("amount"));
+  const type = row.getValue("type");
+  const formatCurrency = useFormatCurrency();
+
+  return (
+    <div
+      className={`text-right font-medium ${type === _TRANSACTION_TYPE.INCOME ? "text-green-600" : "text-destructive"
+        }`}
+    >
+      {type === _TRANSACTION_TYPE.EXPENSE ? "-" : "+"}
+      {formatCurrency(amount)}
+    </div>
+  );
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ActionsCell = ({ row }: { row: any }) => {

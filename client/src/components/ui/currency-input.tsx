@@ -1,6 +1,7 @@
 import { forwardRef } from 'react'
 import CurrencyInput from 'react-currency-input-field'
 import { cn } from '@/lib/utils'
+import { useTypedSelector } from '@/app/hook'
 
 interface CurrencyInputFieldProps {
   name: string
@@ -13,7 +14,10 @@ interface CurrencyInputFieldProps {
 }
 
 const CurrencyInputField = forwardRef<HTMLInputElement, CurrencyInputFieldProps>(
-  ({ name, value, onValueChange, placeholder, className, prefix = '₹', disabled }, ref) => {
+  ({ name, value, onValueChange, placeholder, className, prefix, disabled }, ref) => {
+    const { currency } = useTypedSelector((state) => state.settings);
+    const currencyPrefix = prefix || (currency === 'INR' ? '₹' : currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : '$');
+
     return (
       <CurrencyInput
         id={name}
@@ -22,7 +26,7 @@ const CurrencyInputField = forwardRef<HTMLInputElement, CurrencyInputFieldProps>
         decimalsLimit={2}
         decimalScale={2}
         onValueChange={onValueChange}
-        prefix={prefix}
+        prefix={currencyPrefix}
         disabled={disabled}
         placeholder={placeholder}
         className={cn(
