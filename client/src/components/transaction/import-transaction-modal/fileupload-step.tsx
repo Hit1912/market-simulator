@@ -1,8 +1,8 @@
 import { toast } from "sonner";
 import { usePapaParse } from "react-papaparse";
 import { FileUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import { useRef } from "react";
 import {
   DialogDescription,
@@ -94,21 +94,27 @@ const FileUploadStep = ({ onFileUpload }: FileUploadStepProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      <DialogHeader>
-        <DialogTitle>Upload CSV File</DialogTitle>
-        <DialogDescription>
-          Select a CSV file containing your transaction data
+    <div className="p-8 space-y-8 relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full" />
+
+      <DialogHeader className="relative z-10">
+        <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+          Import Transactions
+        </DialogTitle>
+        <DialogDescription className="text-slate-400">
+          Upload a CSV file to sync your financial data in bulk
         </DialogDescription>
       </DialogHeader>
 
       <div
-        className="w-full border-2 border-dashed rounded-lg
-       text-center"
-        style={{
-          padding: "32px",
-        }}
+        className={cn(
+          "w-full rounded-[2rem] border-2 border-dashed border-white/10 hover:border-indigo-500/30 transition-all duration-500 bg-white/[0.02] hover:bg-white/[0.04] group/drop p-10 cursor-pointer text-center relative overflow-hidden",
+          isLoading && "opacity-60 cursor-not-allowed border-indigo-500/20"
+        )}
+        onClick={() => !isLoading && fileInputRef.current?.click()}
       >
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover/drop:opacity-100 transition-opacity" />
+
         <input
           type="file"
           ref={fileInputRef}
@@ -117,32 +123,30 @@ const FileUploadStep = ({ onFileUpload }: FileUploadStepProps) => {
           className="hidden"
         />
 
-        <Button
-          size="lg"
-          className="!bg-[var(--secondary-dark-color)] text-white min-w-44"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading}
-        >
-          <FileUp className="w-6.5 h-6.5" />
-          Select File
-        </Button>
-
-        {fileInputRef.current?.files?.[0] ? (
-          <p className="mt-4 text-sm text-muted-foreground">
-            Selected: {fileInputRef.current?.files?.[0].name}
-          </p>
-        ) : (
-          <div className="text-xs text-muted-foreground mt-3">
-            Maximum file size: 5MB
+        <div className="flex flex-col items-center gap-4 relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center group-hover/drop:scale-110 group-hover/drop:bg-indigo-500/20 transition-all duration-500">
+            <FileUp className="size-8 text-indigo-400" />
           </div>
-        )}
+
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-white tracking-tight">Drop your CSV here</h3>
+            <p className="text-sm text-slate-500">or click to browse your computer</p>
+          </div>
+
+          <div className="mt-2 text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
+            CSV Supported • Max 5MB
+          </div>
+        </div>
 
         {isLoading && (
-          <div className="mt-4 space-y-2">
-            <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground">
-              Parsing file... {progress}%
-            </p>
+          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] flex items-center justify-center">
+            <div className="w-full max-w-xs px-6 space-y-3">
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-indigo-400">
+                <span>Parsing Assets</span>
+                <span>{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-1.5 bg-white/10 border border-white/5" />
+            </div>
           </div>
         )}
       </div>

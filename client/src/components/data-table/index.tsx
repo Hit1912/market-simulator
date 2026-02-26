@@ -141,6 +141,7 @@ export function DataTable<TData>({
     setRowSelection({});
   };
 
+
   return (
     <div className="w-full">
       {/* Top Bar: Search & Filters */}
@@ -181,16 +182,16 @@ export function DataTable<TData>({
           {(searchTerm ||
             Object.keys(rowSelection).length > 0 ||
             Object.keys(filterValues).length > 0) && (
-            <Button
-              variant="ghost"
-              disabled={isLoading || isBulkDeleting}
-              onClick={handleClear}
-              className="h-8 px-2"
-            >
-              <X className="h-4 w-4 mr-1" />
-              Reset
-            </Button>
-          )}
+              <Button
+                variant="ghost"
+                disabled={isLoading || isBulkDeleting}
+                onClick={handleClear}
+                className="h-8 px-2"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Reset
+              </Button>
+            )}
         </div>
 
         {(selection && hasSelections) || isBulkDeleting ? (
@@ -207,8 +208,8 @@ export function DataTable<TData>({
         ) : null}
       </div>
 
-      {/* Table */}
-      <div className={cn("rounded-md border overflow-x-auto", className)}>
+      {/* Table Section */}
+      <div className={cn("glass-card !bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden", className)}>
         {isLoading ? (
           <TableSkeleton columns={6} rows={20} />
         ) : (
@@ -217,13 +218,13 @@ export function DataTable<TData>({
               table.getRowModel().rows.length === 0 ? "h-[200px]" : ""
             )}
           >
-            <TableHeader className="sticky top-0 bg-muted z-10 ">
+            <TableHeader className="bg-white/5 border-b border-white/5">
               {table.getHeaderGroups().map((group) => (
-                <TableRow key={group.id}>
+                <TableRow key={group.id} className="hover:bg-transparent border-b-0">
                   {group.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className="!font-medium !text-[13px]"
+                      className="!font-bold !text-[11px] uppercase tracking-widest text-slate-400 py-4 h-auto"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -240,9 +241,10 @@ export function DataTable<TData>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-colors group/row"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="!text-[13.3px]">
+                      <TableCell key={cell.id} className="!text-[13px] py-4 text-slate-300 group-hover/row:text-white transition-colors">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

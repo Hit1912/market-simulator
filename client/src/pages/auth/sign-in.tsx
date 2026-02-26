@@ -11,22 +11,32 @@ const features = [
 
 const SignIn = () => {
   return (
-    <div className="min-h-screen bg-[#020617] flex overflow-hidden relative">
+    <div className="min-h-screen bg-[#020617] mesh-bg flex overflow-hidden relative">
       {/* Animated background orbs */}
       <motion.div
-        animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0.25, 0.15] }}
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.2, 0.35, 0.2],
+          x: [0, 50, 0],
+          y: [0, 30, 0]
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-indigo-600/25 blur-[120px] rounded-full pointer-events-none"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.25, 1],
+          opacity: [0.15, 0.25, 0.15],
+          x: [0, -40, 0],
+          y: [0, 60, 0]
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute bottom-[-15%] right-[-10%] w-[55%] h-[55%] bg-violet-600/20 blur-[130px] rounded-full pointer-events-none"
+      />
+      <motion.div
+        animate={{ x: [0, 30, 0], y: [0, -40, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-15%] left-[-10%] w-[55%] h-[55%] bg-blue-600/20 blur-[120px] rounded-full pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-[-10%] right-[-5%] w-[45%] h-[45%] bg-violet-600/15 blur-[100px] rounded-full pointer-events-none"
-      />
-      <motion.div
-        animate={{ x: [0, 20, 0], y: [0, -15, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-primary/10 blur-[80px] rounded-full pointer-events-none"
+        className="absolute top-[30%] left-[25%] w-[35%] h-[35%] bg-blue-500/10 blur-[90px] rounded-full pointer-events-none"
       />
 
       {/* Left Panel — Form */}
@@ -44,14 +54,14 @@ const SignIn = () => {
           <div className="w-full max-w-sm">
             <div className="mb-8 text-center">
               <h1 className="text-3xl font-bold tracking-tight text-white glow-text">Welcome back</h1>
-              <p className="text-slate-400 mt-2 text-sm">Sign in to your Finora account</p>
+              <p className="text-slate-400 mt-2 text-sm">Sign in to your DHR account</p>
             </div>
             <SignInForm />
           </div>
         </motion.div>
 
         <p className="text-center text-xs text-slate-600">
-          © {new Date().getFullYear()} Finora. All rights reserved.
+          © {new Date().getFullYear()} DHR. All rights reserved.
         </p>
       </div>
 
@@ -85,7 +95,7 @@ const SignIn = () => {
               </span>
             </h2>
             <p className="text-slate-400 text-base leading-relaxed mb-10">
-              Finora gives you crystal-clear visibility into your money. Track, analyze, and optimize — all in one beautiful dashboard.
+              DHR gives you crystal-clear visibility into your money. Track, analyze, and optimize — all in one beautiful dashboard.
             </p>
 
             <div className="space-y-5">

@@ -9,7 +9,7 @@ interface ItemPropsType {
   items: {
     title: string;
     href: string;
-    icon: React.ElementType;
+    icon: any;
   }[];
 }
 

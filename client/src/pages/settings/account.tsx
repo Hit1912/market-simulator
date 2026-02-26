@@ -24,7 +24,7 @@ const Account = () => {
         const response: any = await deleteAccount().unwrap();
         toast.success(response.message || "Account deleted successfully");
         dispatch(logout());
-        navigate(AUTH_ROUTES.LOGIN);
+        navigate(AUTH_ROUTES.SIGN_IN);
       } catch (error: any) {
         toast.error(error.data?.message || "Failed to delete account. Please try again.");
       }

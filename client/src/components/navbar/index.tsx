@@ -9,7 +9,7 @@ import { Sheet, SheetContent } from "../ui/sheet";
 import { UserNav } from "./user-nav";
 import LogoutDialog from "./logout-dialog";
 import { useTypedSelector } from "@/app/hook";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const { pathname } = useLocation();
@@ -44,7 +44,7 @@ const Navbar = () => {
         className={cn(
           "w-full px-4 py-3 lg:px-14 sticky top-0 z-50 text-white transition-all duration-500",
           scrolled
-            ? "bg-slate-950/80 backdrop-blur-2xl border-b border-white/8 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+            ? "bg-slate-950/40 backdrop-blur-xl border-b border-white/10 shadow-2xl"
             : "bg-transparent border-b border-white/5"
         )}
       >
@@ -56,7 +56,7 @@ const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="inline-flex md:hidden bg-white/5 hover:bg-white/10 text-white"
+                className="inline-flex md:hidden bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10"
                 onClick={() => setIsOpen(true)}
               >
                 <Menu className="h-5 w-5" />
@@ -65,27 +65,27 @@ const Navbar = () => {
             </div>
 
             {/* Center — Navigation */}
-            <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
+            <nav className="hidden md:flex items-center gap-1.5 flex-1 justify-center">
               {routes.map((route) => {
                 const isActive = pathname === route.href ||
                   (route.href !== PROTECTED_ROUTES.OVERVIEW && pathname.startsWith(route.href));
                 return (
-                  <NavLink key={route.href} to={route.href} className="relative">
+                  <NavLink key={route.href} to={route.href} className="relative group">
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.97 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className={cn(
-                        "relative px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200",
+                        "relative px-5 py-2 rounded-2xl text-sm font-semibold tracking-wide transition-all duration-300",
                         isActive
                           ? "text-white"
-                          : "text-white/50 hover:text-white/80"
+                          : "text-slate-400 hover:text-white/90"
                       )}
                     >
                       {isActive && (
                         <motion.span
                           layoutId="activeNavPill"
-                          className="absolute inset-0 bg-white/8 border border-white/10 rounded-xl"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                          className="absolute inset-0 bg-gradient-to-br from-primary/20 to-indigo-500/20 border border-white/15 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.15)]"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
                       <span className="relative z-10">{route.label}</span>
@@ -97,11 +97,11 @@ const Navbar = () => {
 
             {/* Mobile sheet */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetContent side="left" className="bg-slate-950 border-white/10 text-white p-0">
-                <div className="p-6 border-b border-white/5">
+              <SheetContent side="left" className="bg-slate-950/95 backdrop-blur-2xl border-white/10 text-white p-0">
+                <div className="p-8 border-b border-white/10">
                   <Logo />
                 </div>
-                <nav className="flex flex-col gap-1 p-4">
+                <nav className="flex flex-col gap-2 p-6 mt-4">
                   {routes.map((route) => {
                     const isActive = pathname === route.href;
                     return (
@@ -110,10 +110,10 @@ const Navbar = () => {
                         to={route.href}
                         onClick={() => setIsOpen(false)}
                         className={cn(
-                          "px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                          "px-6 py-4 rounded-2xl text-base font-bold transition-all duration-300",
                           isActive
-                            ? "bg-primary/15 text-primary border border-primary/20"
-                            : "text-white/50 hover:text-white hover:bg-white/5"
+                            ? "bg-primary/20 text-white border border-primary/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
+                            : "text-slate-400 hover:text-white hover:bg-white/5"
                         )}
                       >
                         {route.label}
@@ -125,7 +125,8 @@ const Navbar = () => {
             </Sheet>
 
             {/* Right — User actions */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+              <div className="hidden lg:block h-8 w-[1px] bg-white/10 mx-2" />
               <UserNav
                 userName={user?.name || ""}
                 profilePicture={user?.profilePicture || ""}

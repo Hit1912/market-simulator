@@ -378,7 +378,7 @@ const SingleSelector = React.forwardRef<SingleSelectorRef, SingleSelectorProps>(
       >
         <div
           className={cn(
-            "flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+            "flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-2.5 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300",
             className
           )}
           onClick={() => {
@@ -388,10 +388,10 @@ const SingleSelector = React.forwardRef<SingleSelectorRef, SingleSelectorProps>(
             setOpen(true);
 
             // Clear input value when opening to ensure filtering doesn't restrict options
-            
+
             // Force showing all options
             setShowAllOptions(true);
-            
+
             setInputValue("");
 
 
@@ -482,7 +482,7 @@ const SingleSelector = React.forwardRef<SingleSelectorRef, SingleSelectorProps>(
         <div className="relative">
           {open && (
             <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className="absolute top-2 z-10 w-full rounded-xl border border-white/10 bg-slate-950/95 backdrop-blur-2xl text-white shadow-2xl outline-none animate-in"
               onMouseLeave={() => {
                 setOnScrollbar(false);
               }}
@@ -523,31 +523,31 @@ const SingleSelector = React.forwardRef<SingleSelectorRef, SingleSelectorProps>(
                                 key={option.value}
                                 value={option.label}
                                 disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                              onSelect={() => {
-                                // Clear input to ensure no filtering is applied next time
-                                setInputValue("");
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                onSelect={() => {
+                                  // Clear input to ensure no filtering is applied next time
+                                  setInputValue("");
 
-                                // Set selected option
-                                setSelected(option);
-                                onChange?.(option);
+                                  // Set selected option
+                                  setSelected(option);
+                                  onChange?.(option);
 
-                                // Close dropdown
-                                setOpen(false);
-                              }}
-                              className={cn(
-                                "cursor-pointer",
-                                option.disable &&
+                                  // Close dropdown
+                                  setOpen(false);
+                                }}
+                                className={cn(
+                                  "cursor-pointer",
+                                  option.disable &&
                                   "cursor-default text-muted-foreground"
-                              )}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          );
-                        })}
+                                )}
+                              >
+                                {option.label}
+                              </CommandItem>
+                            );
+                          })}
                       </>
                     </CommandGroup>
                   ))}

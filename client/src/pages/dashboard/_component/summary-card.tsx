@@ -176,18 +176,21 @@ const SummaryCard: FC<SummaryCardProps> = ({
   };
 
   return (
-    <div className="gsap-reveal overflow-hidden rounded-xl">
-      <Card className="glass-card relative border-0 overflow-hidden group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-blue-500/20 blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 !pb-5 relative z-10">
-          <CardTitle className="text-[15px] text-gray-300 font-medium">
+    <div className="gsap-reveal w-full">
+      <Card className="glass-card relative border-0 overflow-hidden group p-2">
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-indigo-500/10 blur opacity-0 group-hover:opacity-100 transition duration-1000" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+          <CardTitle className="text-sm text-slate-400 font-medium uppercase tracking-wider">
             {title}
           </CardTitle>
+          <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/30 transition-colors">
+            {/* Icon could go here if needed, but keeping it clean for now */}
+          </div>
         </CardHeader>
-        <CardContent className="space-y-5 relative z-10">
+        <CardContent className="space-y-4 relative z-10">
           <div
             className={cn(
-              "text-2xl md:text-3xl lg:text-4xl font-bold truncate tracking-tight glow-text",
+              "text-3xl lg:text-4xl font-black tracking-tighter glow-text py-1 break-words",
               cardType === "balance" && value < 0 ? "text-red-400" : "text-white"
             )}
           >
@@ -201,41 +204,30 @@ const SummaryCard: FC<SummaryCardProps> = ({
             />
           </div>
 
-          <div className="text-sm text-muted-foreground mt-2">
+          <div className="text-xs font-medium mt-1">
             {cardType === "savings" ? (
-              <div className="flex items-center gap-1.5">
+              <div className="glass-pill w-fit animate-in fade-in slide-in-from-bottom-2 duration-700">
                 <status.Icon className={cn("size-3.5", status.color)} />
                 <span className={status.color}>
                   {status.label} {value !== 0 && `(${formatPercentage(value)})`}
                 </span>
-                {status.description && (
-                  <span className="text-gray-400 ml-1">
-                    • {status.description}
-                  </span>
-                )}
               </div>
             ) : dateRange?.value === DateRangeEnum.ALL_TIME ? (
-              <span className="text-gray-400">Showing {dateRange?.label}</span>
+              <span className="text-slate-500">All-time overview</span>
             ) : value === 0 || status.label ? (
-              <div className="flex items-center gap-1.5">
-                <status.Icon className={cn("size-3.5", status.color)} />
-                <span className={status.color}>{status.label}</span>
-                {status.description && (
-                  <span className="text-gray-400">• {status.description}</span>
-                )}
-                {!status.description && (
-                  <span className="text-gray-400">• {dateRange?.label}</span>
-                )}
+              <div className="flex items-center gap-1.5 text-slate-500">
+                <status.Icon className="size-3.5" />
+                <span>{status.label || "No data"}</span>
               </div>
             ) : showTrend ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 {percentageChange !== 0 && (
                   <div
                     className={cn(
-                      "flex items-center gap-0.5",
+                      "glass-pill !py-0.5",
                       trendDirection === "positive"
-                        ? "text-green-500"
-                        : "text-red-500"
+                        ? "!text-emerald-400 !bg-emerald-500/10 !border-emerald-500/20"
+                        : "!text-rose-400 !bg-rose-500/10 !border-rose-500/20"
                     )}
                   >
                     {trendDirection === "positive" ? (
@@ -243,29 +235,15 @@ const SummaryCard: FC<SummaryCardProps> = ({
                     ) : (
                       <TrendingDownIcon className="size-3" />
                     )}
-                    {/*                   Math.abs(percentageChange || 0) */}
-                    <span>
-                      {formatPercentage(percentageChange || 0, {
-                        showSign: percentageChange !== 0,
-                        isExpense: cardType === "expenses",
-                        decimalPlaces: 1,
-                      })}
-                    </span>
-                  </div>
-                )}
-
-                {percentageChange === 0 && (
-                  <div className="flex items-center gap-0.5 text-gray-400">
-                    <TrendingDownIcon className="size-3" />
-                    <span>
-                      {formatPercentage(0, {
+                    <span className="text-[11px]">
+                      {formatPercentage(Math.abs(percentageChange || 0), {
                         showSign: false,
                         decimalPlaces: 1,
-                      })}
+                      })}%
                     </span>
                   </div>
                 )}
-                <span className="text-gray-400">• {dateRange?.label}</span>
+                <span className="text-slate-500 text-[11px]">• vs last period</span>
               </div>
             ) : null}
           </div>

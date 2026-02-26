@@ -10,7 +10,8 @@ import {
   RefreshCw,
   Trash2,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format } from "date-fns";  
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -107,18 +108,25 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <span
-          className={`px-2 py-1 rounded-full text-xs ${row.getValue("type") === _TRANSACTION_TYPE.INCOME
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-            }`}
-        >
-          {row.getValue("type")}
-        </span>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const type = row.getValue("type") as string;
+      const isIncome = type === _TRANSACTION_TYPE.INCOME;
+
+      return (
+        <div className="flex items-center">
+          <span
+            className={cn(
+              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
+              isIncome
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                : "bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
+            )}
+          >
+            {type}
+          </span>
+        </div>
+      );
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -224,10 +232,12 @@ const AmountCell = ({ row }: { row: any }) => {
 
   return (
     <div
-      className={`text-right font-medium ${type === _TRANSACTION_TYPE.INCOME ? "text-green-600" : "text-destructive"
-        }`}
+      className={cn(
+        "text-right font-bold text-base tracking-tight",
+        type === _TRANSACTION_TYPE.INCOME ? "text-emerald-400" : "text-rose-400"
+      )}
     >
-      {type === _TRANSACTION_TYPE.EXPENSE ? "-" : "+"}
+      <span className="opacity-70 mr-0.5">{type === _TRANSACTION_TYPE.EXPENSE ? "-" : "+"}</span>
       {formatCurrency(amount)}
     </div>
   );
@@ -274,12 +284,12 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <MoreHorizontal className="h-4 w-4" />
+        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-white/10 rounded-full transition-colors">
+          <MoreHorizontal className="h-4 w-4 text-slate-400" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-44"
+        className="w-48 glass-card border-white/10 p-1.5"
         align="end"
         onCloseAutoFocus={(e) => {
           if (isDeleting || isDuplicating) {
@@ -287,38 +297,32 @@ const ActionsCell = ({ row }: { row: any }) => {
           }
         }}
       >
-        <DropdownMenuItem onClick={() => onOpenDrawer(transactionId)}>
-          <Pencil className="mr-1 h-4 w-4" />
-          Edit
+        <DropdownMenuItem
+          onClick={() => onOpenDrawer(transactionId)}
+          className="rounded-lg py-2 cursor-pointer hover:bg-white/5 transition-colors focus:bg-white/10"
+        >
+          <Pencil className="mr-2 h-4 w-4 text-primary" />
+          <span>Edit Details</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="relative"
+          className="relative rounded-lg py-2 cursor-pointer hover:bg-white/5 transition-colors focus:bg-white/10"
           disabled={isDuplicating}
           onSelect={handleDuplicate}
         >
-          <Copy className="mr-1 h-4 w-4" />
-          Duplicate
+          <Copy className="mr-2 h-4 w-4 text-indigo-400" />
+          <span>Duplicate Entry</span>
           {isDuplicating && (
             <Loader className="ml-1 h-4 w-4 absolute right-2 animate-spin" />
           )}
         </DropdownMenuItem>
-
-        {/* {isRecurring && (
-          <>
-            <DropdownMenuItem>
-              <StopCircleIcon className="mr-1 h-4 w-4" />
-              Stop Recurring
-            </DropdownMenuItem>
-          </>
-        )} */}
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-white/10 my-1" />
         <DropdownMenuItem
-          className="relative !text-destructive"
+          className="relative !text-rose-400 font-semibold rounded-lg py-2 cursor-pointer hover:bg-rose-500/10 transition-colors focus:bg-rose-500/20"
           disabled={isDeleting}
           onSelect={handleDelete}
         >
-          <Trash2 className="mr-1 h-4 w-4 !text-destructive" />
-          Delete
+          <Trash2 className="mr-2 h-4 w-4" />
+          <span>Delete Record</span>
           {isDeleting && (
             <Loader className="ml-1 h-4 w-4 absolute right-2 animate-spin" />
           )}

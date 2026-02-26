@@ -5,6 +5,7 @@ import { _REPORT_STATUS, ReportStatusType } from "@/constant";
 import { ReportType } from "@/features/report/reportType";
 import { useDeleteReportMutation, useResendReportMutation } from "@/features/report/reportAPI";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const ReportActions = ({ reportId }: { reportId: string }) => {
   const [resendReport, { isLoading: isResending }] = useResendReportMutation();
@@ -25,25 +26,25 @@ const ReportActions = ({ reportId }: { reportId: string }) => {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2">
       <Button
         size="sm"
-        variant="outline"
-        className="font-normal gap-2"
+        variant="ghost"
+        className="h-8 px-3 bg-white/5 hover:bg-primary/20 text-slate-300 hover:text-white border border-white/5 hover:border-primary/30 rounded-lg transition-all duration-300 gap-2 text-xs font-semibold"
         onClick={handleResend}
         disabled={isResending || isDeleting}
       >
-        {isResending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+        {isResending ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />}
         Resend
       </Button>
       <Button
         size="sm"
         variant="ghost"
-        className="font-normal text-destructive hover:text-destructive hover:bg-destructive/10"
+        className="h-8 w-8 p-0 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-white/5 hover:border-rose-500/30 rounded-lg transition-all duration-300"
         onClick={handleDelete}
         disabled={isResending || isDeleting}
       >
-        {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+        {isDeleting ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
       </Button>
     </div>
   );
@@ -57,9 +58,11 @@ export const reportColumns: ColumnDef<ReportType>[] = [
     cell: ({ row }) => {
       const period = row.getValue("period") as string;
       return (
-        <div className="flex items-center gap-2 lg:!w-10">
-          <Clock className="h-3.5 w-3.5 opacity-50 shrink-0" />
-          <span>{period}</span>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+            <Clock className="size-4 text-indigo-400" />
+          </div>
+          <span className="text-sm font-semibold text-slate-200">{period}</span>
         </div>
       );
     },
@@ -92,8 +95,10 @@ export const reportColumns: ColumnDef<ReportType>[] = [
 
       return (
         <span
-          className={`inline-flex items-center rounded-full border
-         px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${style}`}
+          className={cn(
+            "inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest",
+            style
+          )}
         >
           {status}
         </span>

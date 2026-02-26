@@ -1,13 +1,10 @@
 import { useEffect, useRef } from "react";
 
-/**
- * CursorGlow — A subtle glowing orb that follows the mouse cursor.
- * Adds a premium, interactive feel to the whole app.
- */
 export function CursorGlow() {
     const glowRef = useRef<HTMLDivElement>(null);
     const pos = useRef({ x: 0, y: 0 });
-    const raf = useRef<number>(0);
+    const currentPos = useRef({ x: 0, y: 0 });
+    const raf = useRef<number | null>(null);
 
     useEffect(() => {
         const onMove = (e: MouseEvent) => {
@@ -15,8 +12,12 @@ export function CursorGlow() {
         };
 
         const tick = () => {
+            // Smooth lerp (linear interpolation) for liquid movement
+            currentPos.current.x += (pos.current.x - currentPos.current.x) * 0.08;
+            currentPos.current.y += (pos.current.y - currentPos.current.y) * 0.08;
+
             if (glowRef.current) {
-                glowRef.current.style.transform = `translate(${pos.current.x - 200}px, ${pos.current.y - 200}px)`;
+                glowRef.current.style.transform = `translate(${currentPos.current.x - 200}px, ${currentPos.current.y - 200}px)`;
             }
             raf.current = requestAnimationFrame(tick);
         };
@@ -26,7 +27,7 @@ export function CursorGlow() {
 
         return () => {
             window.removeEventListener("mousemove", onMove);
-            cancelAnimationFrame(raf.current);
+            if (raf.current) cancelAnimationFrame(raf.current);
         };
     }, []);
 
@@ -36,8 +37,9 @@ export function CursorGlow() {
             className="fixed top-0 left-0 w-[400px] h-[400px] pointer-events-none z-0 rounded-full"
             style={{
                 background:
-                    "radial-gradient(circle, rgba(59,130,246,0.06) 0%, rgba(59,130,246,0.02) 40%, transparent 70%)",
+                    "radial-gradient(circle at center, rgba(67, 56, 202, 0.12) 0%, rgba(99, 102, 241, 0.03) 45%, transparent 70%)",
                 willChange: "transform",
+                filter: "blur(20px)",
             }}
         />
     );

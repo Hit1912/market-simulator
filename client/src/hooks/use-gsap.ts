@@ -8,17 +8,32 @@ export const usePageTransition = (selector: string, dependencies: any[] = []) =>
     useEffect(() => {
         const elements = document.querySelectorAll(selector);
         if (elements.length > 0) {
+            // Kill existing animations on these elements to prevent conflicts
+            gsap.killTweensOf(elements);
+
             gsap.fromTo(
                 elements,
-                { opacity: 0, y: 40, scale: 0.97 },
+                {
+                    opacity: 0,
+                    y: 30,
+                    filter: 'blur(10px)',
+                    scale: 0.98,
+                    transformPerspective: 1000,
+                    rotationX: -5
+                },
                 {
                     opacity: 1,
                     y: 0,
+                    filter: 'blur(0px)',
                     scale: 1,
-                    duration: 0.8,
-                    stagger: 0.12,
-                    ease: 'power4.out',
-                    clearProps: 'all',
+                    rotationX: 0,
+                    duration: 1.2,
+                    stagger: {
+                        amount: 0.4,
+                        ease: "power2.inOut"
+                    },
+                    ease: 'expo.out',
+                    clearProps: 'filter,transform',
                 }
             );
         }
@@ -32,18 +47,22 @@ export const useScrollReveal = (selector: string) => {
         elements.forEach((el) => {
             gsap.fromTo(
                 el,
-                { opacity: 0, y: 50 },
+                {
+                    opacity: 0,
+                    y: 40,
+                    filter: 'blur(8px)'
+                },
                 {
                     opacity: 1,
                     y: 0,
-                    duration: 0.9,
-                    ease: 'power3.out',
-                    clearProps: 'all',
+                    filter: 'blur(0px)',
+                    duration: 1.1,
+                    ease: 'power4.out',
                     scrollTrigger: {
                         trigger: el,
-                        start: 'top 90%',
-                        once: true,
-                    },
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    }
                 }
             );
         });
@@ -51,19 +70,35 @@ export const useScrollReveal = (selector: string) => {
     }, [selector]);
 };
 
-// Number counter animation
 export const useCounterAnimation = (selector: string, dependencies: any[] = []) => {
     useEffect(() => {
         const elements = document.querySelectorAll(selector);
         elements.forEach((el) => {
             gsap.from(el, {
                 textContent: 0,
-                duration: 1.5,
-                ease: 'power1.out',
-                snap: { textContent: 1 },
+                duration: 2,
+                ease: 'power4.out',
+                snap: { textContent: 0.01 },
             });
         });
     }, [selector, ...dependencies]);
+};
+
+// Floating animation for cards/elements
+export const useFloatingAnimation = (selector: string) => {
+    useEffect(() => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((el, i) => {
+            gsap.to(el, {
+                y: -10,
+                duration: 2 + (i % 3) * 0.5,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: i * 0.2
+            });
+        });
+    }, [selector]);
 };
 
 export const useHoverPulse = (selector: string) => {
@@ -72,8 +107,18 @@ export const useHoverPulse = (selector: string) => {
         const handlers: { el: Element; enter: () => void; leave: () => void }[] = [];
 
         elements.forEach((el) => {
-            const enter = () => gsap.to(el, { scale: 1.06, duration: 0.3, ease: 'back.out(1.7)' });
-            const leave = () => gsap.to(el, { scale: 1, duration: 0.3, ease: 'power2.inOut' });
+            const enter = () => gsap.to(el, {
+                scale: 1.04,
+                duration: 0.4,
+                ease: 'elastic.out(1, 0.75)',
+                boxShadow: '0 10px 40px -10px rgba(99,102,241,0.3)'
+            });
+            const leave = () => gsap.to(el, {
+                scale: 1,
+                duration: 0.5,
+                ease: 'power3.out',
+                boxShadow: '0 0px 0px 0px rgba(0,0,0,0)'
+            });
             el.addEventListener('mouseenter', enter);
             el.addEventListener('mouseleave', leave);
             handlers.push({ el, enter, leave });
@@ -86,20 +131,4 @@ export const useHoverPulse = (selector: string) => {
             });
         };
     }, [selector]);
-};
-
-// Shimmer border animation on hover for cards
-export const useCardShimmer = (ref: React.RefObject<HTMLElement>) => {
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const enter = () => gsap.to(el, { boxShadow: '0 0 30px 2px rgba(59,130,246,0.2)', duration: 0.4 });
-        const leave = () => gsap.to(el, { boxShadow: '0 0 0px 0 rgba(59,130,246,0)', duration: 0.4 });
-        el.addEventListener('mouseenter', enter);
-        el.addEventListener('mouseleave', leave);
-        return () => {
-            el.removeEventListener('mouseenter', enter);
-            el.removeEventListener('mouseleave', leave);
-        };
-    }, [ref]);
 };

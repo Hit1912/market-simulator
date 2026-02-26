@@ -9,7 +9,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +24,7 @@ import { useUpdateReportSettingMutation } from "@/features/report/reportAPI";
 import { updateCredentials } from "@/features/auth/authSlice";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string(),
@@ -72,14 +72,13 @@ const ScheduleReportForm = ({
       .then(() => {
         dispatch(updateCredentials({ reportSetting: payload }));
         onCloseDrawer();
-        toast.success("Report setting updated successfully");
+        toast.success("Report settings updated successfully");
       })
       .catch((error) => {
-        toast.error(error.data.message || "Failed to update report setting");
+        toast.error(error.data.message || "Failed to update report settings");
       });
   };
 
-  // Get summary text based on form values
   const getScheduleSummary = () => {
     if (!form.watch("isEnabled")) {
       return "Reports are currently deactivated";
@@ -88,117 +87,132 @@ const ScheduleReportForm = ({
   };
 
   return (
-    <div className="pt-5 px-2.5">
+    <div className="p-8 relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl rounded-full pointer-events-none" />
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="w-full space-y-6 flex-1 px-4">
-            {/* Enable/Disable Switch */}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="space-y-8 relative z-10">
+            {/* Enable/Disable Module */}
             <FormField
               control={form.control}
               name="isEnabled"
               render={({ field }) => (
                 <FormItem
-                  className="flex flex-row items-center justify-between 
-                rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm shadow-sm"
+                  className={cn(
+                    "flex flex-row items-center justify-between rounded-2xl border p-6 transition-all duration-300 backdrop-blur-md",
+                    field.value
+                      ? "bg-indigo-500/5 border-indigo-500/30 shadow-[0_0_20px_rgba(79,70,229,0.1)]"
+                      : "bg-white/[0.03] border-white/10 opacity-70"
+                  )}
                 >
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base font-semibold">Monthly Reports</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      {form.watch("isEnabled")
-                        ? "Receive monthly insights via email"
-                        : "Email notifications are disabled"}
+                  <div className="space-y-1">
+                    <FormLabel className="text-lg font-bold text-white tracking-tight">Monthly Insights</FormLabel>
+                    <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">
+                      {field.value ? "Status: Receiving Reports" : "Status: Notifications Off"}
                     </p>
                   </div>
                   <FormControl>
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-primary"
+                      className="data-[state=checked]:bg-indigo-500"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            <div className="relative space-y-6">
-              {/* Email Field */}
+            <div className={cn("space-y-6 transition-all duration-300", !form.watch("isEnabled") && "opacity-50 pointer-events-none grayscale-[0.5]")}>
+              {/* Email Control */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="text-sm font-medium">Notification Email</FormLabel>
-                    <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-lg px-3 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
-                      <Mail className="h-4 w-4 text-primary/70" />
+                    <FormLabel className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Notification Email</FormLabel>
+                    <div className="flex items-center space-x-3 bg-white/[0.02] border border-white/10 rounded-xl px-4 py-1 group/input focus-within:border-indigo-500/40 focus-within:bg-white/[0.04] transition-all">
+                      <Mail className="size-4 text-indigo-400/70" />
                       <FormControl>
                         <Input
-                          placeholder="Enter email address"
+                          placeholder="Email address"
                           disabled={true}
                           {...field}
-                          className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 h-10"
+                          className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 h-11 text-sm font-semibold text-slate-300"
                         />
                       </FormControl>
                     </div>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Frequency */}
+              {/* Frequency Control */}
               <FormField
                 control={form.control}
                 name="frequency"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="text-sm font-medium">Repeat Frequency</FormLabel>
+                    <FormLabel className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Delivery Frequency</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={true}
                     >
                       <FormControl className="w-full">
-                        <SelectTrigger className="bg-white/5 border-white/10 focus:ring-1 focus:ring-primary/50">
+                        <SelectTrigger className="h-12 bg-white/[0.02] border-white/10 rounded-xl px-4 focus:ring-1 focus:ring-indigo-500/40 hover:bg-white/[0.04] transition-all text-sm font-semibold text-slate-300">
                           <SelectValue placeholder="Select frequency" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-slate-900 border-white/10">
-                        <SelectItem value="MONTHLY">Monthly</SelectItem>
+                      <SelectContent className="glass-card border-white/10">
+                        <SelectItem value="MONTHLY" className="rounded-lg">Monthly Analysis</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {/* Disabled overlay */}
-              {!form.watch("isEnabled") && (
-                <div className="absolute -inset-2 bg-slate-950/20 backdrop-blur-[1px] z-10 rounded-xl" />
-              )}
             </div>
 
-            {/* Schedule Summary */}
-            <div className="bg-primary/5 border border-primary/10 p-4 rounded-xl space-y-2">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
+            {/* Schedule Status Card */}
+            <div className={cn(
+              "relative overflow-hidden p-6 rounded-2xl border transition-all duration-500",
+              form.watch("isEnabled")
+                ? "bg-indigo-500/5 border-indigo-500/20"
+                : "bg-white/[0.02] border-white/5 opacity-50"
+            )}>
+              <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 mb-3 text-indigo-400">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  <span className={cn(
+                    "absolute inline-flex h-full w-full rounded-full opacity-75",
+                    form.watch("isEnabled") ? "animate-ping bg-indigo-500" : "bg-slate-600"
+                  )}></span>
+                  <span className={cn(
+                    "relative inline-flex rounded-full h-2 w-2",
+                    form.watch("isEnabled") ? "bg-indigo-500" : "bg-slate-600"
+                  )}></span>
                 </span>
-                Schedule Status
+                Automation Engine
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm font-medium text-slate-300 leading-relaxed">
                 {getScheduleSummary()}
               </p>
             </div>
 
             {/* Submit Button */}
-            <div className="sticky bottom-0 py-2 z-50">
+            <div className="pt-4">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full text-white"
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-12 rounded-xl shadow-[0_8px_20px_rgba(79,70,229,0.3)] transition-all duration-300 active:scale-[0.98] group/btn overflow-hidden relative"
               >
-                {isLoading && <Loader className="h-4 w-4 animate-spin" />}
-                Save changes
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader className="size-4 animate-spin" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  <span>Save Report Settings</span>
+                )}
               </Button>
             </div>
           </div>

@@ -165,17 +165,17 @@ const ConfirmationStep = ({
         const message =
           error instanceof z.ZodError
             ? error.errors
-                .map((e) => {
-                  if (e.path[0] === "type")
-                    return "Transaction type:- must be INCOME or EXPENSE";
-                  if (e.path[0] === "paymentMethod")
-                    return (
-                      "Payment method:- must be one of: " +
-                      Object.values(PAYMENT_METHODS_ENUM).join(", ")
-                    );
-                  return `${e.path[0]}: ${e.message}`;
-                })
-                .join("\n")
+              .map((e) => {
+                if (e.path[0] === "type")
+                  return "Transaction type:- must be INCOME or EXPENSE";
+                if (e.path[0] === "paymentMethod")
+                  return (
+                    "Payment method:- must be one of: " +
+                    Object.values(PAYMENT_METHODS_ENUM).join(", ")
+                  );
+                return `${e.path[0]}: ${e.message}`;
+              })
+              .join("\n")
             : "Invalid data";
         setErrors((prev) => ({
           ...prev,
@@ -191,63 +191,64 @@ const ConfirmationStep = ({
   console.log(errors, "errors");
 
   return (
-    <div className="space-y-6">
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-1">
-          Confirm Import
+    <div className="p-8 space-y-8 relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full" />
+
+      <DialogHeader className="relative z-10">
+        <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+          Ready to Import
         </DialogTitle>
-        <DialogDescription>
-          Review your settings before importing
+        <DialogDescription className="text-slate-400">
+          Verify your data before finalizing the bulk import
         </DialogDescription>
       </DialogHeader>
 
-      <div className="space-y-4">
-        <div className="border rounded-md p-4 w-full">
-          <h4 className="flex items-center gap-1 font-medium mb-2">
-            <FileCheck className="w-4 h-4" />
+      <div className="space-y-6 relative z-10">
+        <div className="glass-card !bg-white/[0.03] border border-white/5 rounded-2xl p-6">
+          <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400 mb-6">
+            <FileCheck className="size-4" />
             Import Summary
           </h4>
-          <div className="grid grid-cols-2 w-full gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground">File</p>
-              <p>{file?.name}</p>
+          <div className="grid grid-cols-2 gap-y-6 gap-x-8">
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Source File</p>
+              <p className="text-sm font-semibold text-white truncate max-w-[180px]">{file?.name}</p>
             </div>
-            <div>
-              <p className="text-muted-foreground">Columns Mapped</p>
-              <p>{Object.keys(mappings).length}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Mappings</p>
+              <p className="text-sm font-semibold text-white">{Object.keys(mappings).length} Columns</p>
             </div>
-            <div>
-              <p className="text-muted-foreground">Transactions</p>
-              <p>{csvData.length}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Entries</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-white">{csvData.length}</p>
+                <span className="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-md">Validated</span>
+              </div>
             </div>
-            <div>
-              <p className="text-muted-foreground">Transactions Limit </p>
-              <p>{MAX_IMPORT_LIMIT}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Import Limit</p>
+              <p className="text-sm font-semibold text-white">{MAX_IMPORT_LIMIT}</p>
             </div>
           </div>
         </div>
 
         {hasErrors && (
-          <div
-            className="w-full block border border-red-100 bg-[#fef2f2] dark:bg-background
-            rounded text-sm max-h-60 overflow-y-auto"
-            style={{
-              maxHeight: "250px",
-            }}
-          >
-            <p className="font-medium mb-2 bg-[#fef2f2] dark:bg-background sticky top-0 px-2 py-1">
-              Issues found:
-            </p>
-            <div className="space-y-1 p-2">
+          <div className="glass-card !bg-rose-500/[0.02] border border-rose-500/20 rounded-2xl overflow-hidden">
+            <div className="px-5 py-3 bg-rose-500/10 border-b border-rose-500/10">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400">
+                Validation Issues Found ({Object.keys(errors).length})
+              </p>
+            </div>
+            <div className="p-4 space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
               {Object.entries(errors).map(([row, msg]) => (
-                <details key={row} className="group">
-                  <summary className="flex text-sm items-center justify-between cursor-pointer !text-red-600">
-                    <span>Row {row}</span>
-                    <ChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform" />
+                <details key={row} className="group/issue">
+                  <summary className="flex items-center justify-between cursor-pointer py-1.5 hover:bg-white/5 px-2 rounded-lg transition-colors">
+                    <span className="text-xs font-bold text-slate-400 group-open/issue:text-rose-400 transition-colors">Row {row}</span>
+                    <ChevronDown className="size-3.5 text-slate-500 transform group-open/issue:rotate-180 transition-transform" />
                   </summary>
-                  <div className="mt-1 pl-2 text-xs !text-red-500 border-l-2 border-red-200">
+                  <div className="mt-2 pl-4 pr-2 text-xs text-rose-300 leading-relaxed border-l border-rose-500/30 ml-2 mb-2">
                     {msg.split("\n").map((line, i) => (
-                      <p key={i}>{line}</p>
+                      <p key={i} className="py-0.5">{line}</p>
                     ))}
                   </div>
                 </details>
@@ -257,22 +258,37 @@ const ConfirmationStep = ({
         )}
 
         {isLoading && (
-          <div className="space-y-2">
-            <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground">
-              Importing... {progress}%
-            </p>
+          <div className="space-y-4 pt-4 border-t border-white/5">
+            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-indigo-400">
+              <span>Synchronizing Transactions</span>
+              <span>{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-1.5 bg-white/5 border border-white/5" />
           </div>
         )}
       </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack} disabled={isLoading}>
+      <div className="flex justify-between items-center bg-white/5 p-4 -mx-8 -mb-8 mt-4 border-t border-white/10 relative z-10">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          disabled={isLoading}
+          className="rounded-xl px-6 hover:bg-white/10 text-slate-300"
+        >
           <ChevronLeft className="w-4 h-4 mr-2" />
-          Back
+          Adjust Mappings
         </Button>
-        <Button onClick={handleImport} disabled={isLoading}>
-          {isLoading ? "Importing..." : "Confirm Import"}
+        <Button
+          onClick={handleImport}
+          disabled={isLoading}
+          className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-50 disabled:shadow-none transition-all h-10 font-bold"
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Syncing...
+            </div>
+          ) : "Finalize Import"}
         </Button>
       </div>
     </div>

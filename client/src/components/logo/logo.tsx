@@ -18,7 +18,7 @@ const Logo = (props: { url?: string }) => {
         animate={{ opacity: 1, x: 0 }}
         className="font-black text-2xl tracking-tighter glow-text"
       >
-        Finora
+        DHR
       </motion.span>
     </Link>
   )

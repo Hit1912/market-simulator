@@ -17,9 +17,7 @@ const DashboardHeader = ({ title, subtitle, dateRange, setDateRange }: Props) =>
       </div>
       <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 lg:gap-5 w-full lg:w-auto">
         <DateRangeSelect dateRange={dateRange || null} setDateRange={(range) => setDateRange?.(range)} />
-        <div className="hover:scale-105 transition-transform duration-300">
-          <AddTransactionDrawer />
-        </div>
+        <AddTransactionDrawer />
       </div>
     </div>
   );

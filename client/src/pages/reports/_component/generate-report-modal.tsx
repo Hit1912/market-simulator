@@ -49,12 +49,13 @@ export const GenerateReportModal = () => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="!cursor-pointer !px-6 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20">
-                    <Send className="h-4 w-4 mr-2" />
-                    <span>Generate Now</span>
+                <Button className="group/gen relative flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white border-0 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover/gen:translate-x-full transition-transform duration-1000" />
+                    <Send className="size-4 group-hover/gen:translate-x-1 group-hover/gen:-translate-y-1 transition-transform" />
+                    <span className="font-bold tracking-tight">Generate Now</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] glass-card border-white/10 text-white">
+            <DialogContent className="sm:max-w-[425px] glass-card !fixed !top-1/2 !-translate-y-1/2 !left-1/2 !-translate-x-1/2 border-white/10 text-white shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-50">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold">Generate Manual Report</DialogTitle>
                     <DialogDescription className="text-gray-400">
@@ -105,14 +106,14 @@ export const GenerateReportModal = () => {
                     <Button
                         onClick={handleGenerate}
                         disabled={isLoading}
-                        className="w-full text-white"
+                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-11 rounded-xl shadow-[0_4px_12px_rgba(79,70,229,0.3)] transition-all"
                     >
                         {isLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            <Loader2 className="size-4 animate-spin mr-2" />
                         ) : (
-                            <Send className="h-4 w-4 mr-2" />
+                            <Send className="size-4 mr-2" />
                         )}
-                        Generate & Send Report
+                        Generate & Send to Email
                     </Button>
                 </DialogFooter>
             </DialogContent>

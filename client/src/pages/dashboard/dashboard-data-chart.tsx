@@ -136,7 +136,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 tickFormatter={(value) =>
                   format(new Date(value), isMobile ? "MMM d" : "MMM d")
                 }
-                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 500 }}
               />
               <ChartTooltip
                 cursor={{

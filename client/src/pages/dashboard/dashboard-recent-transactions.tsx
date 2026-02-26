@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import TransactionTable from "@/components/transaction/transaction-table";
 import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,9 +27,13 @@ const DashboardRecentTransactions = () => {
           <Button
             asChild
             size="sm"
-            className="glow-btn bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/40 text-white/70 hover:text-white text-xs px-4 transition-all duration-300"
+            variant="ghost"
+            className="group/btn h-8 px-4 bg-primary/10 hover:bg-primary/20 text-primary-foreground border border-primary/20 hover:border-primary/40 rounded-full transition-all duration-300"
           >
-            <Link to={PROTECTED_ROUTES.TRANSACTIONS}>View all →</Link>
+            <Link to={PROTECTED_ROUTES.TRANSACTIONS} className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider">
+              View Analytics
+              <ArrowUpDown className="size-3 transition-transform group-hover/btn:rotate-180" />
+            </Link>
           </Button>
         </div>
         {/* Gradient Divider */}

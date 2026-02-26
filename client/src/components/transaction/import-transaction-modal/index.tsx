@@ -16,7 +16,7 @@ const ImportTransactionModal = () => {
   const [file, setFile] = useState<File | null>(null);
   const [csvColumns, setCsvColumns] = useState<CsvColumn[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [csvData, setCsvData] = useState<any[]>([]); 
+  const [csvData, setCsvData] = useState<any[]>([]);
   const [mappings, setMappings] = useState<Record<string, string>>({});
   const [open, setOpen] = useState(false);
 
@@ -33,40 +33,40 @@ const ImportTransactionModal = () => {
   // console.log(transactionFields, file, csvColumns, csvData, mappings);
 
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFileUpload = (file: File, columns: CsvColumn[], data: any[]) => {
-      setFile(file);
-      setCsvColumns(columns);
-      setCsvData(data);
-      setMappings({});
-      setStep(2);
-    };
+    setFile(file);
+    setCsvColumns(columns);
+    setCsvData(data);
+    setMappings({});
+    setStep(2);
+  };
 
   const resetImport = () => {
-      setFile(null);
-      setCsvColumns([]);
-      setMappings({});
-      setStep(1);
-    };
-    
+    setFile(null);
+    setCsvColumns([]);
+    setMappings({});
+    setStep(1);
+  };
+
   const handleClose = () => {
     setOpen(false);
     setTimeout(() => resetImport(), 300);
   };
 
-    const handleMappingComplete = (mappings: Record<string, string>) => {
-      setMappings(mappings);
-      setStep(3);
-    };
-  
-    const handleBack = (step: 1 | 2 | 3 ) => {
-      setStep(step);
-    };
+  const handleMappingComplete = (mappings: Record<string, string>) => {
+    setMappings(mappings);
+    setStep(3);
+  };
+
+  const handleBack = (step: 1 | 2 | 3) => {
+    setStep(step);
+  };
 
 
 
   const renderStep = () => {
-    switch(step) {
+    switch (step) {
       case 1:
         return <FileUploadStep onFileUpload={handleFileUpload} />;
       case 2:
@@ -96,19 +96,19 @@ const ImportTransactionModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-    <Button
-      variant="outline"
-      className="!shadow-none !cursor-pointer !border-gray-500
-       !text-white !bg-transparent"
-      onClick={() => setOpen(true)}
-    >
-      <ImportIcon className="!w-5 !h-5" />
-      Bulk Import
-    </Button>
-  <DialogContent className="max-w-2xl min-h-[40vh]">
-    {renderStep()}
-  </DialogContent>
-</Dialog>
+      <Button
+        variant="ghost"
+        className="group/import relative flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl transition-all duration-300 overflow-hidden"
+        onClick={() => setOpen(true)}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 opacity-0 group-hover/import:opacity-100 transition-opacity" />
+        <ImportIcon className="size-4.5 text-indigo-400 group-hover/import:scale-110 transition-transform" />
+        <span className="text-sm font-semibold text-slate-300 group-hover/import:text-white transition-colors">Bulk Import</span>
+      </Button>
+      <DialogContent className="max-w-2xl glass-card !fixed !top-1/2 !left-1/2 !-translate-y-1/2 !-translate-x-1/2 border-white/10 p-0 overflow-y-auto max-h-[90vh] shadow-[0_30px_60px_rgba(0,0,0,0.4)] custom-scrollbar">
+        {renderStep()}
+      </DialogContent>
+    </Dialog>
   );
 };
 

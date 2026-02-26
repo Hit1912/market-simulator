@@ -14,8 +14,8 @@ export default function Reports() {
 
   return (
     <PageLayout
-      title="Report History"
-      subtitle="View and manage your financial reports"
+      title="Report Center"
+      subtitle="Comprehensive insights into your financial health"
       addMarginTop
       rightAction={
         <div className="flex items-center gap-3">
@@ -24,10 +24,15 @@ export default function Reports() {
         </div>
       }
     >
-      <div className="gsap-reveal">
-        <Card className="glass-card border-0 !shadow-none overflow-hidden relative">
-          <div className="absolute top-0 left-0 p-20 bg-primary/5 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <CardContent className="relative z-10">
+      <div className="gsap-reveal space-y-6">
+        {/* Statistics or info cards could go here in future */}
+
+        <Card className="glass-card border-0 !shadow-none overflow-hidden relative group">
+          {/* Animated orbit glow */}
+          <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/10 blur-3xl rounded-full pointer-events-none transition-all duration-700 group-hover:bg-primary/20" />
+          <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-blue-500/10 blur-3xl rounded-full pointer-events-none" />
+
+          <CardContent className="relative z-10 p-0">
             <ReportTable />
           </CardContent>
         </Card>

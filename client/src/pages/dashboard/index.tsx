@@ -6,11 +6,15 @@ import ExpensePieChart from "./expense-pie-chart";
 import DashboardRecentTransactions from "./dashboard-recent-transactions";
 import { useState } from "react";
 import { DateRangeType } from "@/components/date-range-select";
-import { usePageTransition } from "@/hooks/use-gsap";
+import { usePageTransition, useHoverPulse, useFloatingAnimation } from "@/hooks/use-gsap";
 
 const Dashboard = () => {
   const [dateRange, _setDateRange] = useState<DateRangeType>(null);
+
+  // Apply premium animations
   usePageTransition(".gsap-reveal", [dateRange]);
+  useHoverPulse(".glass-card");
+  useFloatingAnimation(".floating-icon"); // Future use or specific cards
 
   return (
     <div className="w-full flex flex-col">

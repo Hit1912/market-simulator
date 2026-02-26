@@ -8,6 +8,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   DialogHeader,
   DialogTitle,
@@ -109,90 +110,96 @@ const ColumnMappingStep = ({
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
-    <div className="space-y-6">
-      <DialogHeader>
-        <DialogTitle>Map CSV Columns</DialogTitle>
-        <DialogDescription>
-          Match the columns from your file to the transaction fields
+    <div className="p-8 space-y-8 relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full" />
+
+      <DialogHeader className="relative z-10">
+        <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+          Column Mapping
+        </DialogTitle>
+        <DialogDescription className="text-slate-400">
+          Match your CSV headers to our transaction fields
         </DialogDescription>
       </DialogHeader>
 
-      <div className="border rounded-md overflow-y-auto">
+      <div className="glass-card !bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden max-h-[400px] overflow-y-auto custom-scrollbar">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>CSV Column</TableHead>
-              <TableHead>Transaction Field</TableHead>
+          <TableHeader className="bg-white/5 border-b border-white/5">
+            <TableRow className="hover:bg-transparent border-b-0">
+              <TableHead className="!font-bold !text-[11px] uppercase tracking-widest text-slate-400 py-4 pl-6">CSV Column</TableHead>
+              <TableHead className="!font-bold !text-[11px] uppercase tracking-widest text-slate-400 py-4">Transaction Field</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {csvColumns.map((column) => (
               <TableRow
                 key={column.id}
-                className={column.hasError ? "!bg-red-50" : ""}
+                className={cn(
+                  "border-b border-white/[0.04] hover:bg-white/[0.04] transition-colors group/row",
+                  column.hasError && "bg-rose-500/5 hover:bg-rose-500/10"
+                )}
               >
-                <TableCell className="pl-6">
-                  <div className="flex items-center gap-2">
-                    <FileSpreadsheet className="h-5 w-5 text-green-500" />
-                    <span>{column.name}</span>
+                <TableCell className="pl-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                      <FileSpreadsheet className="size-4 text-emerald-400" />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-200 group-hover/row:text-white transition-colors">{column.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="pl-8">
-                  <div className="flex w-full items-center gap-0">
-                    <HelpCircle className="h-5 w-5 mr-2 text-slate-400" />
-                    <div className="w-[200px]">
-                      <Select
-                        value={mappings[column.name] || ""}
-                        onValueChange={(value) =>
-                          handleMappingChange(column.name, value)
-                        }
+                <TableCell className="py-2">
+                  <div className="flex items-center gap-3 px-3 py-1.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
+                    <HelpCircle className="size-4 text-slate-500" />
+                    <Select
+                      value={mappings[column.name] || ""}
+                      onValueChange={(value) =>
+                        handleMappingChange(column.name, value)
+                      }
+                    >
+                      <SelectTrigger
+                        className="h-7 border-none shadow-none focus:ring-0 p-0 text-sm font-medium bg-transparent"
                       >
-                        <SelectTrigger
-                          className="border-none shadow-none focus:ring-0 pl-0"
-                          style={{
-                            width: "100%",
-                          }}
-                        >
-                          <SelectValue
-                            className="!text-muted-foreground w-full capitalize"
-                            placeholder="Select a field"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableAttributes.map((attr) => {
-                            const isDisabled =
-                              attr.fieldName !== "Skip" &&
-                              attr.fieldName !== mappings[column.name] &&
-                              Object.values(mappings).includes(attr.fieldName);
+                        <SelectValue
+                          className="capitalize"
+                          placeholder="Map to Field"
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="glass-card border-white/10 p-1.5">
+                        {availableAttributes.map((attr) => {
+                          const isDisabled =
+                            attr.fieldName !== "Skip" &&
+                            attr.fieldName !== mappings[column.name] &&
+                            Object.values(mappings).includes(attr.fieldName);
 
-                            return (
-                              <SelectItem
-                                key={attr.fieldName}
-                                value={attr.fieldName}
-                                className="w-full flex items-center justify-between gap-2"
-                                disabled={isDisabled}
-                              >
-                                <span className="flex-1 capitalize">
+                          return (
+                            <SelectItem
+                              key={attr.fieldName}
+                              value={attr.fieldName}
+                              className="rounded-lg py-2 cursor-pointer hover:bg-white/5 transition-colors focus:bg-white/10"
+                              disabled={isDisabled}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <span className="capitalize">
                                   {attr.fieldName}
                                   {attr?.required && (
-                                    <span className="text-red-500"> *</span>
+                                    <span className="text-rose-500 ml-1">*</span>
                                   )}
                                 </span>
                                 {isDisabled && (
-                                  <BanIcon className="currentColor size-4" />
+                                  <BanIcon className="size-3.5 opacity-50 ml-2" />
                                 )}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                      {errors[column.name] && (
-                        <p className="text-[10px] text-red-500">
-                          {errors[column.name]}
-                        </p>
-                      )}
-                    </div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </div>
+                  {errors[column.name] && (
+                    <p className="mt-1.5 ml-1 text-[10px] font-bold uppercase tracking-wider text-rose-400">
+                      {errors[column.name]}
+                    </p>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -200,16 +207,17 @@ const ColumnMappingStep = ({
         </Table>
       </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+      <div className="flex justify-between items-center bg-white/5 p-4 -mx-8 -mb-8 mt-4 border-t border-white/10">
+        <Button variant="ghost" onClick={onBack} className="rounded-xl px-6 hover:bg-white/10 text-slate-300">
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
         <Button
           onClick={validateMappings}
           disabled={!hasRequiredMappings || hasErrors}
+          className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-50 disabled:shadow-none transition-all"
         >
-          Continue ({validMappingsCount}/{transactionFields.length})
+          Verify Data ({validMappingsCount}/{transactionFields.length})
           <ChevronRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

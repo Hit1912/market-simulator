@@ -66,16 +66,16 @@ function FloatingLight() {
 export function Scene3D() {
     return (
         <div className="fixed inset-0 -z-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[#020617]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.1),transparent_70%)]" />
+            {/* Background color removed to show global mesh gradient */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(67,56,202,0.1),transparent_70%)]" />
             <Canvas
                 camera={{ position: [0, 0, 3], fov: 75 }}
                 dpr={[1, 2]}
                 gl={{ antialias: true, alpha: true }}
             >
-                <ParticleField count={3000} size={0.03} color="#60a5fa" speed={1} />
-                <ParticleField count={1500} size={0.05} color="#8b5cf6" speed={1.5} />
-                <ParticleField count={800} size={0.08} color="#3b82f6" speed={2} />
+                <ParticleField count={3000} size={0.03} color="#4f46e5" speed={1} />
+                <ParticleField count={1500} size={0.05} color="#7c3aed" speed={1.5} />
+                <ParticleField count={800} size={0.08} color="#6366f1" speed={2} />
                 <FloatingLight />
                 <ambientLight intensity={0.2} />
             </Canvas>

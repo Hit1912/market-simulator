@@ -212,50 +212,56 @@ const TransactionForm = (props: {
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>Transaction Type</FormLabel>
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-xs font-bold uppercase tracking-widest text-slate-500">Transaction Type</FormLabel>
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="flex space-x-2"
+                    className="grid grid-cols-2 gap-3"
                     disabled={isScanning}
                   >
                     <label
                       htmlFor={_TRANSACTION_TYPE.INCOME}
                       className={cn(
-                        `text-sm font-normal leading-none cursor-pointer
-                        flex items-center space-x-2 rounded-md 
-                        shadow-sm border p-2 flex-1 justify-center 
-                        `,
+                        "relative flex cursor-pointer items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 transition-all duration-300 hover:bg-white/10",
                         field.value === _TRANSACTION_TYPE.INCOME &&
-                        "!border-primary"
+                        "border-emerald-500/50 bg-emerald-500/10 ring-1 ring-emerald-500/50"
                       )}
                     >
                       <RadioGroupItem
                         value={_TRANSACTION_TYPE.INCOME}
                         id={_TRANSACTION_TYPE.INCOME}
-                        className="!border-primary"
+                        className="sr-only"
                       />
-                      Income
+                      <span className={cn(
+                        "text-sm font-bold transition-colors",
+                        field.value === _TRANSACTION_TYPE.INCOME ? "text-emerald-400" : "text-slate-400"
+                      )}>Income</span>
+                      {field.value === _TRANSACTION_TYPE.INCOME && (
+                        <div className="absolute top-1 right-1 size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                      )}
                     </label>
 
                     <label
                       htmlFor={_TRANSACTION_TYPE.EXPENSE}
                       className={cn(
-                        `text-sm font-normal leading-none cursor-pointer
-                        flex items-center space-x-2 rounded-md 
-                        shadow-sm border p-2 flex-1 justify-center 
-                        `,
+                        "relative flex cursor-pointer items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 transition-all duration-300 hover:bg-white/10",
                         field.value === _TRANSACTION_TYPE.EXPENSE &&
-                        "!border-primary"
+                        "border-rose-500/50 bg-rose-500/10 ring-1 ring-rose-500/50"
                       )}
                     >
                       <RadioGroupItem
                         value={_TRANSACTION_TYPE.EXPENSE}
                         id={_TRANSACTION_TYPE.EXPENSE}
-                        className="!border-primary"
+                        className="sr-only"
                       />
-                      Expense
+                      <span className={cn(
+                        "text-sm font-bold transition-colors",
+                        field.value === _TRANSACTION_TYPE.EXPENSE ? "text-rose-400" : "text-slate-400"
+                      )}>Expense</span>
+                      {field.value === _TRANSACTION_TYPE.EXPENSE && (
+                        <div className="absolute top-1 right-1 size-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                      )}
                     </label>
                   </RadioGroup>
                   <FormMessage />
@@ -269,10 +275,11 @@ const TransactionForm = (props: {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="!font-normal">Title</FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-widest text-slate-500">Title</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Transaction title"
+                      placeholder="What was this for?"
+                      className="h-12 border-white/5 bg-white/5 placeholder:text-slate-600 focus:bg-white/[0.08]"
                       {...field}
                       disabled={isScanning}
                     />
@@ -288,11 +295,12 @@ const TransactionForm = (props: {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-widest text-slate-500">Amount</FormLabel>
                   <FormControl>
-                    <div className="relative">
+                    <div className="relative group">
                       <CurrencyInputField
                         {...field}
+                        className="h-14 text-2xl font-black tracking-tighter border-white/5 bg-white/5 focus:bg-white/[0.08] transition-all"
                         disabled={isScanning}
                         onValueChange={(value) => field.onChange(value || "")}
                         placeholder="0.00"
@@ -501,22 +509,24 @@ const TransactionForm = (props: {
             />
           </div>
 
-          <div className="sticky bottom-0 bg-white dark:bg-background pb-2">
+          <div className="sticky bottom-0 bg-slate-950/80 backdrop-blur-md pt-6 pb-2 mt-8 -mx-4 px-8 border-t border-white/5">
             <Button
               type="submit"
-              className="w-full !text-white"
+              className="w-full h-12 !text-white bg-indigo-600 hover:bg-indigo-700 shadow-[0_0_25px_rgba(79,70,229,0.3)] border-0 rounded-xl font-bold tracking-tight text-lg transition-all active:scale-95"
               disabled={isScanning || isCreating || isUpdating}
             >
               {isCreating || isUpdating ? (
-                <Loader className="h-4 w-4 animate-spin" />
+                <Loader className="h-5 w-5 animate-spin mr-2" />
               ) : null}
-              {isEdit ? "Update" : "Save"}
+              {isEdit ? "Update Transaction" : "Save Transaction"}
             </Button>
           </div>
 
           {isLoading && (
-            <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/70 dark:bg-background/70 z-50 flex justify-center">
-              <Loader className="h-8 w-8 animate-spin" />
+            <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center">
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <Loader className="h-10 w-10 animate-spin text-indigo-400" />
+              </div>
             </div>
           )}
         </form>
